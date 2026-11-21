@@ -1,0 +1,741 @@
+<title>조선 탐정 사무소</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Song+Myung&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+/* 한지 위 수사 기록: 위는 현장과 인물, 아래는 수첩과 소지품을 나란히. 쪽빛은 조작, 인주 빨강은 새 단서와 판결, 비취색은 비녀 */
+:root{
+  --paper:#EDEDE7; --sheet:#F7F7F3; --ink:#1F2127; --faint:#686B73; --rule:#C9CAC2;
+  --indigo:#2D4878; --indigo-soft:#DCE3EF; --seal:#A2302A; --ok:#2F6B4A; --jade:#3E8A6E; --wax:#FBF8EE;
+  --display:"Song Myung","Nanum Myeongjo",serif;
+  --body:"Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#16171B; --sheet:#1E2025; --ink:#E7E5DD; --faint:#9EA0A6; --rule:#383A40;
+    --indigo:#93AEDD; --indigo-soft:#26324A; --seal:#E27D6C; --ok:#7CC39B; --jade:#7CC9A8; --wax:#E9E4D4; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#16171B; --sheet:#1E2025; --ink:#E7E5DD; --faint:#9EA0A6; --rule:#383A40;
+  --indigo:#93AEDD; --indigo-soft:#26324A; --seal:#E27D6C; --ok:#7CC39B; --jade:#7CC9A8; --wax:#E9E4D4; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--paper); color:var(--ink); font-family:var(--body); font-size:16px; line-height:1.7;
+  padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1040px; margin:0 auto; padding-block:28px 120px}
+button{font:inherit; color:inherit}
+button:focus-visible{outline:2px solid var(--indigo); outline-offset:2px}
+h1,h2,h3{font-family:var(--display); font-weight:400; margin:0}
+
+header{display:flex; gap:20px; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; border-bottom:2px solid var(--ink); padding-bottom:14px}
+.office{font-family:var(--display); font-size:15px; color:var(--faint); margin:0}
+h1{font-size:clamp(30px,6vw,46px); line-height:1.15; margin-top:2px}
+.progress{display:flex; gap:18px; color:var(--faint); font-size:14px; font-variant-numeric:tabular-nums}
+.progress b{font-family:var(--display); font-weight:400; font-size:24px; color:var(--ink); margin-right:3px}
+
+.brief{display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); gap:28px; margin:20px 0 28px}
+@media (max-width:760px){.brief{grid-template-columns:1fr}}
+.brief .story p{margin:0 0 10px; max-width:64ch}
+.brief .story p:first-child{font-size:17px}
+.rules{background:var(--sheet); border-left:3px solid var(--indigo); padding:14px 18px; font-size:15px}
+.rules h3{font-size:18px; margin-bottom:6px}
+.rules ol{margin:0; padding-left:20px} .rules li{margin:3px 0}
+
+h2{font-size:23px; margin-bottom:10px}
+.sec-head{display:flex; align-items:baseline; justify-content:space-between; gap:12px}
+.sec-head small{color:var(--faint); font-size:14px}
+.rooms{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-bottom:26px}
+.people{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-bottom:30px}
+@media (max-width:620px){.rooms{grid-template-columns:repeat(2,minmax(0,1fr))} .people{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.card{background:var(--sheet); border:1px solid var(--rule); border-radius:3px; padding:0; cursor:pointer; text-align:left; overflow:hidden; display:flex; flex-direction:column}
+.card:hover{border-color:var(--indigo)}
+.card .pic{aspect-ratio:3/2; background-size:cover; background-position:center; width:100%}
+.people .card .pic{aspect-ratio:1}
+.card .cap{padding:8px 12px 10px; display:flex; justify-content:space-between; align-items:baseline; gap:8px}
+.card .cap span{font-family:var(--display); font-size:19px}
+.card .cap small{color:var(--faint); font-size:13px; font-variant-numeric:tabular-nums; white-space:nowrap}
+.card .cap small.all{color:var(--ok)}
+
+.desk{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:20px; align-items:start}
+@media (max-width:760px){.desk{grid-template-columns:1fr}}
+.panel{background:var(--sheet); border:1px solid var(--rule); padding:18px 18px 16px}
+.panel h2{display:flex; justify-content:space-between; align-items:baseline}
+.panel h2 small{font-family:var(--body); font-size:13px; color:var(--faint)}
+.panel .hint{color:var(--faint); font-size:14px; margin:-4px 0 10px}
+.panel h3{font-size:17px; margin:14px 0 4px; color:var(--faint)}
+.notes{list-style:none; margin:0; padding:0}
+.note{display:block; width:100%; text-align:left; background:transparent; border:0; border-top:1px dashed var(--rule); padding:8px 6px 8px 8px; font-size:15px; line-height:1.55; cursor:pointer; border-left:3px solid transparent}
+.notes li:first-child .note{border-top:0}
+.note .kind{font-size:12px; color:var(--faint); display:block}
+.note:hover{background:var(--paper)}
+.note.sel{background:var(--indigo-soft); border-left-color:var(--indigo)}
+.note.ded{color:var(--ink)}
+.note.ded .kind{color:var(--seal)}
+.empty{color:var(--faint); font-size:15px; margin:0}
+
+.items{display:grid; grid-template-columns:repeat(auto-fill,minmax(88px,1fr)); gap:8px}
+.item{background:var(--paper); border:1px solid var(--rule); border-radius:3px; padding:8px 4px 6px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:4px; font-size:13px; line-height:1.3; text-align:center}
+.item svg{width:44px; height:44px}
+.item:hover{border-color:var(--indigo)}
+.item.sel{background:var(--indigo-soft); border-color:var(--indigo)}
+.slot{border:1px dashed var(--rule); border-radius:3px; aspect-ratio:1/0.9}
+.look{margin-top:12px; font-size:15px; min-height:3em; border-top:1px solid var(--rule); padding-top:10px}
+.look b{font-family:var(--display); font-weight:400; font-size:17px; margin-right:6px}
+
+.ic{fill:none; stroke:var(--ink); stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
+.ic .w{fill:var(--wax)} .ic .k{fill:var(--ink); stroke:none} .ic .j{fill:var(--jade)} .ic .r{fill:var(--seal); stroke:none}
+.ic .p{fill:var(--sheet)} .ic .s{fill:var(--rule)} .ic .g{stroke:var(--faint)}
+
+.combine{position:fixed; left:0; right:0; bottom:0; z-index:15; background:var(--ink); color:var(--sheet);
+  padding-block:12px calc(12px + env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px))}
+.combine > div{max-width:1040px; margin:0 auto; display:flex; gap:12px; align-items:center; flex-wrap:wrap}
+.combine .pick{flex:1; min-width:200px; font-size:15px}
+.combine .pick em{font-style:normal; font-family:var(--display); font-size:17px}
+.combine .pick i{font-style:normal; opacity:.6; margin:0 8px}
+.cbtn{border:1px solid var(--sheet); background:transparent; color:var(--sheet); border-radius:3px; padding:7px 14px; cursor:pointer}
+.cbtn.primary{background:var(--sheet); color:var(--ink)}
+.cbtn:disabled{opacity:.4; cursor:not-allowed}
+
+.toast{position:fixed; left:50%; top:calc(env(safe-area-inset-top,0px) + 16px); transform:translateX(-50%); z-index:40; max-width:min(560px,calc(100vw - 32px));
+  background:var(--sheet); color:var(--ink); border:1px solid var(--rule); border-left:4px solid var(--seal); padding:10px 16px; font-size:15px; box-shadow:0 6px 24px rgba(0,0,0,.18)}
+.toast b{font-family:var(--display); font-weight:400; color:var(--seal); margin-right:6px}
+.toast.plain{border-left-color:var(--faint)} .toast.plain b{color:var(--faint)}
+
+.accuse-row{margin-top:26px; display:flex; justify-content:flex-end}
+.btn{padding:9px 16px; border-radius:3px; cursor:pointer; border:1px solid var(--ink); background:transparent}
+.btn.primary{background:var(--ink); color:var(--sheet)}
+.btn.big{font-family:var(--display); font-size:19px; padding:10px 22px}
+.btn:disabled{opacity:.4; cursor:not-allowed}
+.accuse{margin-top:30px; border-top:2px solid var(--ink); padding-top:20px}
+.q{margin-bottom:22px}
+.q h3{font-size:20px; margin-bottom:8px}
+.q .hint{color:var(--faint); font-size:14px; margin:-4px 0 8px}
+.opts{display:flex; flex-wrap:wrap; gap:8px}
+.opt{font-size:15px; background:var(--sheet); border:1px solid var(--rule); border-radius:3px; padding:8px 12px; cursor:pointer; text-align:left; max-width:100%; display:inline-flex; align-items:center; gap:8px}
+.opt img{width:32px; height:32px; border-radius:2px}
+.opt[aria-pressed="true"]{background:var(--indigo); border-color:var(--indigo); color:var(--sheet)}
+.row{display:flex; gap:10px; flex-wrap:wrap}
+
+.verdict{margin-top:30px; background:var(--sheet); border:1px solid var(--rule); padding:26px 24px; position:relative; overflow:hidden}
+.verdict h2{font-size:30px; margin-bottom:4px}
+.verdict p{max-width:66ch}
+.verdict .head{padding-right:100px}
+.seal{position:absolute; top:18px; right:18px; width:84px; height:84px; border:3px solid var(--seal); color:var(--seal); font-family:var(--display);
+  display:grid; place-items:center; font-size:26px; line-height:1.05; text-align:center; transform:rotate(-8deg); border-radius:4px}
+@media (prefers-reduced-motion:no-preference){ .seal{animation:stamp .45s cubic-bezier(.2,1.6,.4,1)} }
+@keyframes stamp{from{transform:rotate(-8deg) scale(1.8); opacity:0} to{transform:rotate(-8deg) scale(1); opacity:1}}
+.score{list-style:none; padding:0; margin:14px 0}
+.score li{padding:3px 0}
+.score .o{color:var(--ok)} .score .x{color:var(--seal)}
+
+/* 현장과 심문 화면 */
+.scene{position:fixed; inset:0; z-index:20; background:var(--paper); display:flex; flex-direction:column;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px)}
+.s-top{display:flex; align-items:center; gap:14px; padding-block:10px; border-bottom:1px solid var(--rule);
+  padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px))}
+.s-top h2{margin:0; font-size:26px; line-height:1.2}
+.s-top .count{color:var(--faint); font-size:14px; font-variant-numeric:tabular-nums}
+.s-top .btn{margin-left:auto}
+.stage{position:relative; flex:1; min-height:0; display:grid; place-items:center; padding:8px}
+.frame{position:relative; aspect-ratio:3/2; max-width:100%; background-size:100% 100%; border-radius:2px; box-shadow:0 2px 14px rgba(0,0,0,.15)}
+.hs{position:absolute; border:0; background:transparent; cursor:pointer; padding:0; border-radius:4px}
+@media (hover:hover){ .hs:hover{box-shadow:inset 0 0 0 2px rgba(45,72,120,.55); background:rgba(45,72,120,.08)} }
+.hs:focus-visible{outline:none; box-shadow:inset 0 0 0 3px var(--indigo); background:rgba(45,72,120,.12)}
+.hs.got::after{content:""; position:absolute; top:4px; right:4px; width:10px; height:10px; border-radius:50%; background:var(--faint); box-shadow:0 0 0 2px var(--sheet); opacity:.85}
+.s-say{background:var(--sheet); border-top:1px solid var(--rule); padding-block:14px 16px; min-height:150px;
+  padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px))}
+.s-say > div{max-width:820px; margin:0 auto}
+.s-say b{font-family:var(--display); font-weight:400; font-size:19px; margin-right:6px}
+.s-say p{margin:0}
+.s-say .new{color:var(--seal); font-size:14px; margin-top:4px}
+.s-say .old{color:var(--faint); font-size:14px; margin-top:4px}
+.takes{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+.takes:empty{display:none}
+.take{display:flex; align-items:center; gap:8px; background:var(--paper); border:1px solid var(--rule); border-radius:3px; padding:4px 6px 4px 4px; font-size:15px}
+.take svg{width:32px; height:32px}
+.btn.small{padding:4px 10px; font-size:14px}
+
+.talk{display:grid; grid-template-columns:minmax(0,300px) minmax(0,1fr); gap:24px; align-items:start; width:100%; max-width:880px; padding:12px 0}
+@media (max-width:620px){.talk{grid-template-columns:120px minmax(0,1fr); gap:14px}}
+.talk img{width:100%; border-radius:3px; border:1px solid var(--rule)}
+.talk .say{font-size:17px; min-height:5em}
+.talk .say p{margin:0 0 10px}
+.talk .say .aside{color:var(--faint); font-size:15px}
+.talk .acts{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+.show{margin-top:14px; border-top:1px solid var(--rule); padding-top:12px}
+.show h3{font-size:17px; margin-bottom:8px}
+.show .chips{display:flex; flex-wrap:wrap; gap:6px; max-height:34vh; overflow:auto}
+.chip{font-size:14px; border:1px solid var(--rule); background:var(--sheet); border-radius:3px; padding:5px 10px; cursor:pointer; text-align:left}
+.chip:hover{border-color:var(--indigo)}
+.chip.it{border-color:var(--jade)}
+.stage.talkstage{place-items:start center; overflow:auto}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <p class="office">조선 탐정 사무소 · 첫 번째 사건</p>
+      <h1>사라진 봉황 옥비녀</h1>
+    </div>
+  </header>
+
+  <section class="brief">
+    <div class="story">
+      <p>한양 북촌 골목 끝, 간판도 없이 문을 연 조선 탐정 사무소. 오늘 아침 윤 참판 댁 청지기가 헐레벌떡 찾아왔습니다.</p>
+      <p>내일은 마님의 쉰 번째 생신입니다. 잔치 날 꽂으려고 아껴 둔 봉황 옥비녀가 어젯밤 안방 자개함에서 감쪽같이 사라졌습니다. 참판 어른은 소문이 나기 전에 조용히 범인을 밝히고, 비녀까지 되찾아 달라고 하십니다.</p>
+      <p>어젯밤 집 안팎을 오간 사람은 넷입니다. 사랑채에 묵는 먼 친척 김 서생, 머슴 돌쇠, 자개함 열쇠를 맡은 침모 끝순, 낮에 다녀간 방물장수 박씨. 박씨는 오늘 아침 외상값을 받으러 다시 와 있습니다. 대문은 해시(밤 9~11시) 초에 잠겼고, 그 시각 마님은 대청에서 잔치 준비를 하느라 안방을 비웠습니다.</p>
+    </div>
+    <aside class="rules">
+      <h3>수사하는 법</h3>
+      <ol>
+        <li>현장 그림에서 수상한 곳을 눌러 보세요. 보고 들은 것은 수첩에 적히고, 물건은 소지품에 넣을지 직접 고릅니다. 쓸모없는 물건도 섞여 있어요.</li>
+        <li>사람에게 이야기를 듣고, 모은 것을 보여 주면 새 이야기가 나옵니다.</li>
+        <li>수첩과 소지품에서 두 가지를 골라 <b>맞춰보기</b>를 하면 추리가 생깁니다.</li>
+        <li>범인을 지목할 때는 추리로만 근거를 댈 수 있어요. 횟수 제한은 없습니다.</li>
+      </ol>
+      <h3 style="margin-top:12px">옛 시각</h3>
+      <p style="margin:0">술시는 저녁 7~9시, 해시는 밤 9~11시입니다.</p>
+    </aside>
+  </section>
+
+  <div class="sec-head"><h2>현장</h2><small>눌러서 들어가 살펴보세요</small></div>
+  <div class="rooms" id="rooms"></div>
+  <div class="sec-head"><h2>심문</h2><small>모은 것을 보여 줄 수 있어요</small></div>
+  <div class="people" id="people"></div>
+
+  <div class="desk">
+    <section class="panel">
+      <h2>수첩 <small>눌러서 고르기</small></h2>
+      <h3>단서와 진술</h3>
+      <ul class="notes" id="notes"></ul>
+      <p class="empty" id="notesEmpty">아직 적은 것이 없습니다.</p>
+      <h3>추리</h3>
+      <ul class="notes" id="deds"></ul>
+      <p class="empty" id="dedsEmpty">두 가지를 골라 맞춰 보면 추리가 여기에 적힙니다.</p>
+    </section>
+    <section class="panel">
+      <h2>소지품 <small>눌러서 살펴보고 고르기</small></h2>
+      <div class="items" id="items"></div>
+      <div class="look" id="look"><span class="empty">현장에서 챙긴 물건이 여기에 모입니다.</span></div>
+    </section>
+  </div>
+
+  <div class="accuse-row"><button class="btn primary big" id="accuseBtn">범인 지목하기</button></div>
+
+  <section class="accuse" id="accuse" hidden>
+    <h2>참판 어른 앞에서</h2>
+    <div class="q"><h3>비녀를 훔친 사람은 누구인가?</h3><div class="opts" id="q1"></div></div>
+    <div class="q"><h3>자개함은 어떻게 열렸나?</h3><p class="hint">추리 중에서 고르세요.</p><div class="opts" id="q2"></div></div>
+    <div class="q"><h3>범인이 어젯밤 안방에 다녀갔다는 증거는?</h3><p class="hint">추리 중에서 고르세요.</p><div class="opts" id="q3"></div></div>
+    <div class="q"><h3>범인은 어떤 거짓말을 했나?</h3><p class="hint">추리 중에서 고르세요.</p><div class="opts" id="q4"></div></div>
+    <div class="q"><h3>왜 훔쳤나?</h3><p class="hint">추리 중에서 고르세요.</p><div class="opts" id="q5"></div></div>
+    <div class="q"><h3>비녀는 지금 어디 있나?</h3><p class="hint">소지품 중에서 고르세요.</p><div class="opts" id="q6"></div></div>
+    <div class="row">
+      <button class="btn primary" id="submitBtn" disabled>이대로 고하기</button>
+      <button class="btn" id="backBtn">더 조사하기</button>
+    </div>
+  </section>
+
+  <section class="verdict" id="verdict" hidden></section>
+</div>
+
+<div class="combine" id="combine" hidden>
+  <div>
+    <div class="pick" id="pick"></div>
+    <button class="cbtn primary" id="combineBtn">맞춰보기</button>
+    <button class="cbtn" id="clearBtn">선택 해제</button>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden role="status"></div>
+
+<div class="scene" id="scene" hidden role="dialog" aria-modal="true" aria-labelledby="sTitle">
+  <div class="s-top">
+    <h2 id="sTitle"></h2>
+    <span class="count" id="sCount"></span>
+    <button class="btn" id="exitBtn">나가기</button>
+  </div>
+  <div class="stage" id="stage"><div class="frame" id="frame"></div></div>
+  <div class="s-say" aria-live="polite"><div id="say"></div></div>
+</div>
+
+<div class="scene" id="talkScene" hidden role="dialog" aria-modal="true" aria-labelledby="tTitle">
+  <div class="s-top">
+    <h2 id="tTitle"></h2>
+    <span class="count" id="tSub"></span>
+    <button class="btn" id="tExit">나가기</button>
+  </div>
+  <div class="stage talkstage">
+    <div class="talk">
+      <img id="tImg" alt="">
+      <div>
+        <div class="say" id="tSay" aria-live="polite"></div>
+        <div class="acts">
+          <button class="btn" id="tAsk">이야기 듣기</button>
+          <button class="btn primary" id="tShowBtn">보여주기</button>
+        </div>
+        <div class="show" id="tShow" hidden>
+          <h3>무엇을 보여 줄까?</h3>
+          <div class="chips" id="tChips"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/*IMAGES*/
+(function(){
+  // ---------- 물건 아이콘 (48×48) ----------
+  const ICON = {
+    i_nails:'<path d="M12 36 L30 14 M20 40 L38 20"/><circle class="k" cx="31" cy="13" r="3.5"/><circle class="k" cx="39" cy="19" r="3.5"/><path class="g" d="M27 19 l3 1 M35 25 l3 1"/>',
+    i_wax:'<path class="w" d="M10 32 Q8 24 16 23 Q20 16 26 22 Q34 20 33 28 Q36 34 28 35 Q18 38 10 32 Z"/><ellipse class="w" cx="38" cy="36" rx="4" ry="2.6"/>',
+    i_stub:'<rect class="w" x="18" y="22" width="12" height="16" rx="1"/><path d="M24 22 V17"/><path class="w" d="M18 26 q-2 4 0 6"/><path d="M12 40 H36"/>',
+    i_debt:'<path class="p" d="M10 10 H34 L38 14 V40 H10 Z"/><path class="g" d="M15 18 H31 M15 23 H33 M15 28 H27"/><rect class="r" x="26" y="31" width="7" height="7"/>',
+    i_knife:'<path class="s" d="M9 36 L28 17 Q33 12 38 11 Q37 16 32 21 L13 40 Z"/><path d="M30 19 l2 2 M26 23 l1.5 1.5"/><rect class="k" x="6" y="36" width="9" height="5" rx="1.5" transform="rotate(-45 10.5 38.5)"/>',
+    i_jade:'<path class="j" d="M8 40 L32 16 L35 19 L11 43 Z"/><path class="j" d="M31 17 Q30 8 38 6 Q44 8 42 15 Q38 20 34 19 Z"/><path d="M36 9 q3 1 4 5 M33 13 l3 -1"/>',
+    i_wrap:'<path class="p" d="M10 12 H36 L38 18 L34 22 L38 28 L35 34 L38 40 H10 Z"/><path class="g" d="M15 19 H29 M15 25 H31 M15 31 H27"/>',
+    i_fake:'<path class="w" d="M8 40 L30 18 L32 20 L10 42 Z"/><circle class="w" cx="35" cy="14" r="7"/><circle class="g" cx="33" cy="12" r="2"/>',
+    i_box:'<rect class="s" x="8" y="22" width="30" height="18" rx="1"/><path class="p" d="M8 22 L14 10 L42 14 L38 22 Z"/><circle class="w" cx="15" cy="31" r="2"/><circle class="w" cx="24" cy="28" r="1.6"/><circle class="w" cx="31" cy="33" r="2"/><path class="g" d="M38 22 L42 26"/>',
+    i_comb:'<path class="s" d="M8 18 H40 V25 H8 Z"/><path d="M11 25 V36 M15 25 V36 M19 25 V36 M23 25 V36 M27 25 V36 M31 25 V36 M35 25 V36"/>',
+    i_cup:'<path class="p" d="M12 18 H36 L33 34 H15 Z"/><ellipse class="w" cx="24" cy="19" rx="11" ry="2.5"/><path d="M18 38 H30"/>',
+    i_shoes:'<path class="k" d="M4 32 Q6 22 18 22 Q24 22 26 28 V34 H4 Z"/><path class="k" d="M20 40 Q22 30 34 30 Q40 30 44 36 V42 H20 Z"/><circle class="s" cx="24" cy="39" r="2.4"/>',
+    i_scroll:'<rect class="k" x="12" y="6" width="24" height="3"/><rect class="p" x="14" y="9" width="20" height="30"/><rect class="k" x="12" y="39" width="24" height="3"/><path class="g" d="M24 14 V34 M20 20 H28"/>',
+    i_axe:'<path stroke-width="3.5" d="M12 43 L32 13"/><path class="s" d="M26 8 L42 13 L38 25 L29 18 Z"/>',
+    i_log:'<rect class="p" x="6" y="18" width="32" height="14" rx="2"/><ellipse class="w" cx="38" cy="25" rx="5" ry="7"/><circle class="g" cx="38" cy="25" r="2"/>',
+    i_bowl:'<path class="w" d="M8 18 Q24 40 40 18 Z"/><path d="M8 18 H40 M18 34 H30"/>',
+    i_gourd:'<path class="w" d="M8 22 Q24 42 40 22 Z"/><path d="M8 22 H40 M40 22 L45 18"/>',
+    i_oil:'<path class="p" d="M18 42 Q12 30 18 24 V12 H30 V24 Q36 30 30 42 Z"/><path class="s" d="M15 35 H33 Q32 40 30 42 H18 Q16 40 15 35 Z"/>',
+    i_lantern:'<path d="M24 4 V10"/><rect class="k" x="15" y="10" width="18" height="3"/><path style="fill:var(--indigo);stroke:none" d="M16 13 H32 V25 H16 Z"/><path class="r" d="M16 25 H32 V36 H16 Z"/><rect class="k" x="15" y="36" width="18" height="3"/>',
+    i_lamp:'<path class="w" d="M6 16 Q24 32 42 16 Z"/><path d="M6 16 H42"/><path d="M24 26 V42 M15 42 H33"/>',
+    i_jeogori:'<path class="p" d="M10 16 L18 10 H30 L38 16 L43 28 L34 30 V40 H14 V30 L5 28 Z"/><path d="M18 10 L26 26 M30 10 L22 22"/><path class="r" d="M24 24 l-3 9 h2 l1.5 -6 l1.5 6 h2 Z"/>',
+    i_straw:'<path class="s" d="M4 32 Q6 24 16 24 Q24 24 24 30 V34 H4 Z"/><path class="s" d="M22 40 Q24 32 34 32 Q42 32 44 38 V42 H22 Z"/><path class="g" d="M10 26 V34 M16 25 V34 M28 33 V42 M34 32 V42"/>',
+    i_scrap:'<path class="p" d="M6 14 L22 9 L20 22 L8 24 Z"/><path class="s" d="M22 19 L42 15 L40 34 L24 36 Z"/><path class="w" d="M8 28 L22 30 L18 43 L6 39 Z"/>',
+    i_ring:'<ellipse class="s" cx="24" cy="28" rx="13" ry="9"/><ellipse class="p" cx="24" cy="28" rx="8" ry="5"/><path class="g" d="M16 22 q8 -6 16 0"/>'
+  };
+  const tm = s => String(s).replace(/술시/g,'술시(저녁 7~9시)').replace(/해시/g,'해시(밤 9~11시)');
+  const icon = id => '<svg class="ic" viewBox="0 0 48 48" aria-hidden="true">'+(ICON[id]||'')+'</svg>';
+
+  // ---------- 단서 (물건 i_ / 관찰 n_ / 진술 t_) ----------
+  const E = {
+    i_nails:{kind:'안방', name:'쇠못 두 개', text:'자개함 경첩에서 빠진 쇠못. 못대가리 밑에 얇은 쇠붙이로 비튼 듯한 가는 긁힌 자국이 있다.'},
+    i_wax:{kind:'안방', name:'촛농 조각', text:'안방 문지방 앞에서 떼어 낸 하얀 촛농. 매끈하게 굳었다. 들기름이 아니라 밀초다.'},
+    i_stub:{kind:'사랑채', name:'밀초 토막', text:'사랑채 촛대에 남아 있던 밀초. 손가락 한 마디만큼 남았다. 밤늦게까지 켜 두었다는 뜻이다.'},
+    i_debt:{kind:'사랑채', name:'빚 독촉장', text:'종로 전당포가 김 서생에게 보낸 독촉장. "오늘 해 지기 전까지 갚지 않으면 관아에 고하겠음."'},
+    i_knife:{kind:'사랑채', name:'은장도', text:'김 서생 벼루함 속 작은 은장도. 칼끝이 휘고 이가 빠져 있다.'},
+    i_jade:{kind:'뒷마당', name:'봉황 옥비녀', text:'묵직한 비취 옥비녀. 머리 쪽에 봉황이 새겨져 있다. 마님의 비녀다.'},
+    i_wrap:{kind:'뒷마당', name:'비녀를 싼 종이', text:'비녀를 싸고 있던 종이. 한쪽 가장자리가 거칠게 찢겨 있고, 붓으로 쓴 글씨 몇 줄이 비친다.'},
+    i_fake:{kind:'대문간', name:'옥빛 비녀', text:'대문 앞 디딤돌 틈에서 주운 옥빛 비녀. 생각보다 가볍다.'},
+    i_box:{kind:'안방', name:'뜯긴 자개함', text:'비녀가 들어 있던 자개함. 앞쪽 자물쇠는 잠긴 그대로인데 뒤쪽 경첩이 뜯겨 있다. 열쇠 없이 연 것이다.'},
+    i_comb:{kind:'안방', name:'마님의 빗', text:'경대 서랍 속 대모갑 빗. 비녀와는 상관없어 보인다.', junk:true},
+    i_cup:{kind:'사랑채', name:'가득 찬 술잔', text:'김 서생 술상에 있던 잔. 술이 가득 찬 채 식었다.'},
+    i_shoes:{kind:'사랑채', name:'김 서생의 가죽신', text:'굽 있는 가죽신. 굽에 덜 마른 진흙이 묻어 있다.'},
+    i_scroll:{kind:'사랑채', name:'족자', text:'"안빈낙도"라 쓴 족자.', junk:true},
+    i_axe:{kind:'뒷마당', name:'돌쇠의 도끼', text:'날이 두껍고 무거운 도끼.'},
+    i_log:{kind:'뒷마당', name:'장작 한 개', text:'새로 팬 장작. 나뭇진 냄새가 난다.', junk:true},
+    i_bowl:{kind:'부엌', name:'사발', text:'잔치에 쓸 흰 사발.', junk:true},
+    i_gourd:{kind:'부엌', name:'바가지', text:'물독 위에 있던 바가지.', junk:true},
+    i_oil:{kind:'부엌', name:'들기름 병', text:'하인들 방 등잔에 쓰는 들기름. 끈적하고 누런 기름이다.'},
+    i_lantern:{kind:'대문간', name:'청사초롱', text:'밤새 켜 두어 심지가 다 탄 초롱.', junk:true},
+    i_lamp:{kind:'행랑방', name:'들기름 등잔', text:'사기 접시 등잔. 들기름이 가득하다.'},
+    i_jeogori:{kind:'행랑방', name:'지은 저고리', text:'마님 생신 저고리. 깃까지 다 달았다.'},
+    i_straw:{kind:'행랑방', name:'끝순의 짚신', text:'굽 없는 짚신. 진흙이 없다.', junk:true},
+    i_scrap:{kind:'행랑방', name:'자투리 천', text:'짚바구니 속 자투리 천.', junk:true},
+    i_ring:{kind:'행랑방', name:'은가락지', text:'끝순의 반짇고리 속 헝겊에 싸여 있던 은가락지. 침모가 갖기엔 비싼 물건이다.'},
+
+    n_bed:{kind:'사랑채', text:'김 서생의 이부자리는 개어진 그대로다. 밤새 누운 흔적이 없다.'},
+    n_cup:{kind:'사랑채', text:'김 서생의 술잔은 가득 찬 채 식어 있고 안주도 그대로다.'},
+    n_torn:{kind:'사랑채', text:'김 서생 서안 위 서책 한 권의 맨 뒷장이 거칠게 찢겨 나갔다.'},
+    n_shoes:{kind:'사랑채', text:'댓돌 위 김 서생의 가죽신 굽에 덜 마른 진흙이 묻어 있다. 사랑채 마당은 바싹 말라 있다.'},
+    n_tile:{kind:'뒷마당', text:'사랑채 쪽 담 위 기와 한 장이 새로 깨져 있다. 누군가 담을 넘다 밟은 자국이다.'},
+    n_prints:{kind:'뒷마당', text:'담 밑 진흙에서 안채 쪽으로 이어지는 발자국. 앞축과 굽 자국이 따로 찍힌 가죽신 자국이다.'},
+    n_axe:{kind:'뒷마당', text:'모탕에 박힌 돌쇠의 도끼. 날이 두껍고 무거워 작은 못을 뽑을 수 없다.'},
+    n_lamp:{kind:'행랑방', text:'하인들 방엔 밀초나 촛대가 없다. 모두 들기름 등잔만 쓴다.'},
+    n_sewing:{kind:'행랑방', text:'마님 생신 저고리가 깃까지 다 지어져 있다. 밤새 쉬지 않고 바느질해야 가능한 양이다.'},
+    n_straw:{kind:'행랑방', text:'끝순의 짚신엔 굽이 없고 진흙도 묻어 있지 않다.'},
+
+    t_cook:{kind:'부엌어멈 진술', text:'해시쯤 끝순이 등잔 기름을 받으러 부엌에 왔다가 바로 돌아갔다.'},
+    t_gate:{kind:'문지기 진술', text:'박씨는 술시 끝에 나갔다. 해시 초에 빗장을 걸었고 아침까지 드나든 사람이 없다.'},
+    t_kim:{kind:'김 서생 진술', text:'술시부터 취해서 아침까지 곯아떨어져 잤다고 한다.'},
+    t_dolsoe:{kind:'돌쇠 진술', text:'해시에 뒷마당에서 장작을 팼다. 사랑채 담 쪽에서 쿵 하는 소리를 들었다.'},
+    t_dolsoe2:{kind:'돌쇠 진술', text:'오늘 새벽 큰 된장독 뚜껑이 비뚤게 덮여 있었고, 진흙 손자국이 묻어 있었다.'},
+    t_kkeut:{kind:'끝순 진술', text:'자개함 열쇠를 맡고 있지만 밤새 행랑방에서 바느질했다. 열쇠는 아직 허리춤에 있다.'},
+    t_kkeut2:{kind:'끝순 진술', text:'은가락지는 박씨에게 외상으로 산 것이라며 울먹였다.'},
+    t_desc:{kind:'끝순 진술', text:'마님의 비녀는 묵직한 비취이고 머리 쪽에 봉황이 새겨져 있다.'},
+    t_park:{kind:'박씨 진술', text:'어제 낮 마님께 비녀가 쌀 서른 섬 값이라고 말했다. 그 자리에서 김 서생도 듣고 있었다.'},
+    t_park_fake:{kind:'박씨 진술', text:'옥빛 비녀는 박씨가 어제 나가다 흘린 유리 구슬 비녀다.'},
+    t_park_ring:{kind:'박씨 진술', text:'은가락지는 끝순에게 외상으로 판 것이다.'},
+    t_pawn:{kind:'박씨 진술', text:'종로 전당포는 출처를 묻지 않고 물건을 받아 주는 곳으로 소문났다.'}
+  };
+
+  // ---------- 추리 (두 가지를 맞추면 생김) ----------
+  const DEDS = {
+    d_pry:{name:'은장도로 경첩을 뜯었다', text:'자개함 경첩 못은 김 서생의 은장도로 비틀어 뽑았다. 못의 가는 긁힌 자국과 휘고 이 빠진 칼끝이 맞는다.', pairs:[['i_nails','i_knife'],['i_box','i_knife']]},
+    d_hinge:{name:'열쇠 없이 경첩을 뜯었다', text:'쇠못은 자개함 뒤쪽 경첩에서 빠진 것이다. 범인은 열쇠 없이 경첩 못을 뽑아 함을 열었다. 열쇠를 가진 사람이라면 이럴 필요가 없다.', pairs:[['i_nails','i_box']]},
+    d_axe:{name:'도끼는 범행 도구가 아니다', text:'경첩 못을 뽑은 건 얇은 쇠붙이다. 돌쇠의 두꺼운 도끼날로는 할 수 없다.', pairs:[['i_nails','n_axe'],['i_nails','i_axe']]},
+    d_wax:{name:'안방의 촛농은 사랑채 밀초다', text:'안방 문지방의 촛농은 사랑채의 밀초와 같다. 범인은 사랑채 밀초를 들고 안방에 들어왔다.', pairs:[['i_wax','i_stub']]},
+    d_maid:{name:'하인 방의 불빛이 아니다', text:'안방의 촛농은 밀초다. 들기름 등잔만 쓰는 하인들 방에서 온 불빛이 아니다.', pairs:[['i_wax','n_lamp'],['i_wax','i_lamp'],['i_wax','i_oil']]},
+    d_shoe:{name:'발자국은 김 서생의 가죽신이다', text:'담 밑의 굽 있는 발자국과 김 서생 가죽신 굽의 진흙이 맞는다. 김 서생은 어젯밤 뒷마당 진흙을 밟았다.', pairs:[['n_prints','n_shoes'],['n_prints','i_shoes']]},
+    d_heel:{name:'발자국은 하인의 것이 아니다', text:'담 밑 발자국은 굽 있는 가죽신 자국이다. 짚신을 신는 하인들의 발자국이 아니다.', pairs:[['n_prints','n_straw'],['n_prints','i_straw']]},
+    d_wall:{name:'누군가 해시에 담을 넘었다', text:'돌쇠가 해시에 들은 쿵 소리는 고양이가 아니었다. 누군가 사랑채 쪽 담을 넘다 기와를 깼다.', pairs:[['n_tile','t_dolsoe'],['n_tile','n_prints']]},
+    d_hidden:{name:'비녀는 숨겨 두었던 것', text:'누군가 비녀를 종이에 싸서 된장독에 숨겼다. 그 자리에서 팔 수 없으니 나중에 꺼내 갈 셈이었다.', pairs:[['i_jade','i_wrap'],['i_jade','t_dolsoe2']]},
+    d_lie:{name:'취해서 잤다는 건 거짓말', text:'김 서생은 술시부터 취해 잤다고 했지만, 술잔은 가득 찬 그대로였고 누운 흔적도 없었다. 밀초는 밤늦게까지 탔다.', pairs:[['n_cup','t_kim'],['i_cup','t_kim'],['n_bed','t_kim'],['i_stub','t_kim'],['n_cup','n_bed'],['i_cup','n_bed']]},
+    d_motive:{name:'빚과 비녀 값', text:'김 서생은 오늘 해 지기 전까지 갚아야 할 빚이 있었고, 비녀가 쌀 서른 섬 값이라는 말을 직접 들었다.', pairs:[['i_debt','t_park'],['i_debt','t_pawn']]},
+    d_paper:{name:'비녀를 싼 종이의 주인', text:'비녀를 싼 종이는 김 서생 서책에서 찢어 낸 맨 뒷장이다. 찢긴 자리가 꼭 맞는다.', pairs:[['i_wrap','n_torn']]},
+    d_fake:{name:'대문간 비녀는 가짜다', text:'대문간에서 주운 옥빛 비녀는 가볍고 봉황도 없다. 박씨가 흘린 유리 구슬 비녀일 뿐이다.', pairs:[['i_fake','t_desc'],['i_fake','t_park_fake'],['i_fake','i_jade']]},
+    d_ring:{name:'은가락지는 다른 일이다', text:'끝순이 숨긴 은가락지는 박씨에게 외상으로 산 것이다. 비녀 사건과는 관계없다.', pairs:[['i_ring','t_park_ring'],['i_ring','t_kkeut2']]},
+    d_kkeut:{name:'끝순은 부엌만 다녀왔다', text:'끝순은 해시에 부엌에 잠깐 기름을 받으러 갔을 뿐이고, 밤새 저고리를 지었다.', pairs:[['t_cook','n_sewing'],['t_cook','i_jeogori'],['t_cook','t_kkeut']]},
+    d_gate:{name:'박씨는 해시에 집 밖에 있었다', text:'박씨는 빗장을 걸기 전에 나갔고 그 뒤로 대문은 열리지 않았다. 해시에 박씨는 집 안에 없었다.', pairs:[['t_gate','t_park']]}
+  };
+  const PAIR = {};
+  for(const [d,v] of Object.entries(DEDS)) for(const p of v.pairs) PAIR[[...p].sort().join('+')] = d;
+
+  // ---------- 현장 (좌표는 1536×1024 원본 기준) ----------
+  const PLACES = [
+    {id:'anbang', name:'안방', intro:'마님 처소입니다. 아침에 소동이 난 뒤로 아무도 손대지 않았어요. 어젯밤 해시에 이 방은 비어 있었습니다.', spots:[
+      {id:'window', label:'창', r:[0,70,175,570], text:'창호지에 구멍 하나 없고 창살도 멀쩡하다. 창으로 드나든 사람은 없다.'},
+      {id:'screen', label:'병풍', r:[228,200,468,520], text:'붉은 모란 병풍. 뒤를 들춰 봐도 먼지뿐이다.'},
+      {id:'mirror', label:'경대', r:[722,295,302,428], take:['i_comb'], text:'마님의 경대. 서랍 속 분첩과 빗, 은 노리개까지 그대로다. 다른 건 손대지 않고 비녀 하나만 노렸다.'},
+      {id:'bedding', label:'이부자리', r:[0,752,690,272], text:'마님의 이부자리. 어젯밤 늦게 펴 둔 그대로다.'},
+      {id:'box', label:'자개함', r:[898,726,268,160], take:['i_box'], text:'자개함 뚜껑이 비뚤게 벌어져 있다. 앞쪽 자물쇠는 잠긴 그대로인데 뒤쪽 경첩이 뜯겨 있다. 열쇠가 있었다면 이럴 필요가 없었다.'},
+      {id:'nails', label:'쇠못', r:[770,855,190,115], take:['i_nails'], text:'바닥에 떨어진 쇠못 두 개. 못대가리 밑에 얇은 쇠붙이로 비튼 듯한 가는 긁힌 자국이 있다.'},
+      {id:'wax', label:'문지방 앞', r:[1245,680,210,100], take:['i_wax'], text:'문지방 앞 바닥에 하얗게 굳은 촛농. 손톱으로 떼어 보니 매끈하다. 들기름이 아니라 밀초다.'},
+      {id:'door', label:'방문', r:[1188,140,330,545], text:'방문엔 걸쇠 자국이 없다. 어젯밤 문은 닫혀만 있었다고 한다.'}
+    ]},
+    {id:'sarang', name:'사랑채', intro:'김 서생이 묵는 손님방입니다. 김 서생은 지금 대청에서 참판 어른과 이야기 중이에요.', spots:[
+      {id:'scroll', label:'족자', r:[70,20,165,515], take:['i_scroll'], text:'"안빈낙도(安貧樂道)"라 쓴 족자. 가난해도 편안히 도를 즐기라는 말이다. 이 방 주인에겐 쉽지 않은 말인 듯하다.'},
+      {id:'bed', label:'이부자리', r:[0,555,420,235], give:['n_bed'], text:'이불과 베개가 반듯하게 개어져 있다. 펴고 잔 뒤에 갰다면 이렇게 각이 살아 있지 않을 것이다.'},
+      {id:'table', label:'술상', r:[358,600,370,350], give:['n_cup'], take:['i_cup'], text:'술잔이 가득 찬 채 식어 있다. 안주도 그대로다. 술병을 흔들어 보니 거의 가득하다.'},
+      {id:'books', label:'서책', r:[728,505,255,120], give:['n_torn'], take:['i_debt'], text:'서책 사이에 접힌 종이 한 장. 종로 전당포의 빚 독촉장이다. "오늘 해 지기 전까지 갚지 않으면 관아에 고하겠음." 그리고 맨 위 서책은 맨 뒷장이 거칠게 찢겨 나가 있다.'},
+      {id:'inkbox', label:'벼루함', r:[992,535,160,82], take:['i_knife'], text:'벼루함 서랍 속에 작은 은장도가 있다. 칼끝이 휘고 이가 빠져 있다. 먹을 가는 데 쓸 물건은 아니다.'},
+      {id:'candle', label:'촛대', r:[1145,310,125,435], take:['i_stub'], text:'밀초가 손가락 한 마디만큼 남았다. 밤늦게까지 켜 두었다는 뜻이다.'},
+      {id:'shoes', label:'댓돌', r:[1325,525,170,115], give:['n_shoes'], take:['i_shoes'], text:'댓돌 위 김 서생의 가죽신. 굽에 덜 마른 진흙이 묻어 있다. 사랑채 마당은 바싹 말라 있는데.'},
+      {id:'window', label:'창', r:[415,90,675,390], text:'창밖으로 사랑채 마당이 보인다. 비가 온 지 열흘이 넘어 마당은 바싹 말랐다.'}
+    ]},
+    {id:'yard', name:'뒷마당', intro:'안채 뒤, 사랑채와 낮은 담 하나를 사이에 둔 마당입니다. 어젯밤 해시에 돌쇠가 여기서 장작을 팼어요. 우물가만 물이 고여 질척합니다.', spots:[
+      {id:'jars', label:'장독대', r:[0,300,395,300], need:'jarhint', take:['i_jade','i_wrap'],
+        locked:'된장, 간장, 고추장 독. 뚜껑이 모두 닫혀 있다. 이유 없이 열었다간 부엌어멈에게 혼쭐이 난다.',
+        text:'돌쇠 말대로 가장 큰 독 뚜껑 가장자리에 진흙 손자국이 있다. 열어 보니 된장 위에 종이로 싼 것이 꽂혀 있다. 풀어 보니, 봉황이 새겨진 옥비녀다!'},
+      {id:'well', label:'우물', r:[395,355,395,285], text:'두레박을 내려 우물 속까지 살폈지만 아무것도 없다. 우물가에 흘린 물로 땅이 질척하다.'},
+      {id:'wall', label:'담장', r:[520,150,480,200], give:['n_tile'], text:'사랑채 쪽 담 위 기와 한 장이 깨져 있다. 깨진 면이 새것이다. 누군가 담을 넘다 밟은 것이다.'},
+      {id:'prints', label:'진흙', r:[560,640,440,340], give:['n_prints'], text:'담 밑 진흙에서 안채 쪽으로 이어지는 발자국. 앞축 자국과 굽 자국이 따로 찍혀 있다. 짚신이 아니라 굽 있는 가죽신이다.'},
+      {id:'axe', label:'모탕과 도끼', r:[1005,345,200,365], give:['n_axe'], take:['i_axe'], text:'모탕에 박힌 돌쇠의 도끼. 날이 두껍고 무겁다. 이걸로 작은 경첩 못을 뽑기는 어렵다.'},
+      {id:'logs', label:'장작더미', r:[1205,495,331,345], take:['i_log'], text:'새로 패 둔 장작이 수북하다. 돌쇠가 밤새 일한 건 사실인 듯하다.'}
+    ]},
+    {id:'kitchen', name:'부엌', intro:'부엌어멈이 내일 잔치 음식을 준비하느라 분주합니다.', spots:[
+      {id:'shelf', label:'찬장', r:[0,0,385,930], take:['i_bowl'], text:'잔치에 쓸 그릇이 가지런하다. 없어진 것은 없다.'},
+      {id:'jar', label:'물독', r:[385,330,225,420], take:['i_gourd'], text:'물독에 물이 찰랑하다. 바가지 밑까지 살폈지만 아무것도 없다.'},
+      {id:'pot', label:'아궁이', r:[610,320,370,410], text:'가마솥에서 식혜가 끓고 있다. 아궁이 재 속까지 뒤졌지만 나온 건 없다.'},
+      {id:'basket', label:'나물 바구니', r:[755,765,235,200], text:'다듬다 만 나물이 수북하다.'},
+      {id:'cook', label:'부엌어멈', r:[990,200,300,760], give:['t_cook'], text:'"해시쯤 끝순이가 등잔 기름이 떨어졌다고 받으러 왔지요. 바느질감을 한아름 안고 와서는 기름만 받아 바로 갔어요. 안채 쪽으론 안 가던데요."'},
+      {id:'oil', label:'기름병', r:[1290,665,215,280], take:['i_oil'], text:'들기름 병 하나가 많이 줄었다. 하인들 방 등잔은 모두 이 기름을 쓴다. 밀초는 귀해서 사랑채와 대청에만 낸다고 한다.'}
+    ]},
+    {id:'gate', name:'대문간', intro:'솟을대문 옆 걸상에서 문지기가 꾸벅꾸벅 졸고 있습니다.', spots:[
+      {id:'window', label:'행랑채 창', r:[45,385,225,210], text:'문지기가 쓰는 방의 창이다.'},
+      {id:'doors', label:'대문', r:[420,250,615,235], text:'두툼한 나무 대문. 억지로 연 흔적은 없다.'},
+      {id:'bolt', label:'빗장', r:[520,488,410,122], text:'굵은 나무 빗장. 안에서만 걸고 풀 수 있다.'},
+      {id:'step', label:'디딤돌', r:[270,860,765,75], take:['i_fake'], text:'대문 앞 디딤돌 틈에서 무언가 반짝인다. 꺼내 보니 옥빛 비녀다! ...그런데 손에 쥐어 보니 생각보다 가볍다.'},
+      {id:'keeper', label:'문지기', r:[1075,400,310,545], give:['t_gate'], text:'"방물장수 박씨는 술시 끝 무렵에 나갔습니다요. 그러고 해시 들자마자 제가 빗장을 걸었지요. 졸긴 했어도 빗장 소리는 못 놓칩니다요. 아침까지 아무도 드나들지 않았습니다."'},
+      {id:'lantern', label:'청사초롱', r:[1340,210,115,215], take:['i_lantern'], text:'청사초롱. 밤새 켜 두어 심지가 다 탔다.'}
+    ]},
+    {id:'haeng', name:'행랑방', intro:'침모 끝순이 쓰는 작은 방입니다.', spots:[
+      {id:'rack', label:'횃대', r:[85,75,665,390], text:'갈아입을 저고리와 치마가 걸쳐져 있다. 소매 안까지 털어 봤지만 나온 건 없다.'},
+      {id:'basket', label:'짚바구니', r:[70,610,255,240], take:['i_scrap'], text:'뚜껑을 열어 보니 자투리 천만 가득하다.'},
+      {id:'lamp', label:'등잔', r:[330,455,185,495], give:['n_lamp'], take:['i_lamp'], text:'사기 접시 등잔에 들기름이 가득하고 심지는 꺼져 있다. 방 안 어디에도 밀초나 촛대는 없다. 하인들 방은 모두 등잔만 쓴다고 한다.'},
+      {id:'sewing', label:'바느질감', r:[520,640,450,215], give:['n_sewing'], take:['i_jeogori'], text:'마님 생신에 입으실 저고리. 깃까지 다 달았다. 하룻밤에 이만큼 하려면 쉬지 않고 바느질했어야 한다.'},
+      {id:'box', label:'반짇고리', r:[880,525,305,160], take:['i_ring'], text:'실패와 바늘방석을 들추자, 헝겊에 싼 은가락지가 나왔다. 침모가 갖기엔 비싼 물건이다.'},
+      {id:'shoes', label:'짚신', r:[1280,785,225,135], give:['n_straw'], take:['i_straw'], text:'끝순의 짚신. 굽이 없고 바닥에 진흙도 없다.'},
+      {id:'door', label:'방문', r:[1215,60,321,700], text:'닫힌 방문. 창호지 너머로 마당이 비친다.'}
+    ]}
+  ];
+
+  // ---------- 인물 ----------
+  const PEOPLE = [
+    {id:'kim', name:'김 서생', sub:'사랑채 손님', talk:'t_kim',
+     line:'"어젯밤엔 술이 과해 술시부터 곯아떨어졌소. 아침 소란에 깼지. 선비를 의심하다니 무례하구려."',
+     show:{
+       i_knife:'"...그건 내 은장도요. 벼루 뚜껑이 뻑뻑해서 비틀다 이가 나갔소. 그게 어쨌단 말이오?"',
+       i_debt:'"남의 서책을 뒤지다니! ...빚이야 선비에게도 있을 수 있는 일이오."',
+       n_cup:'"주, 주량이 약해서 한 잔에도 취하오."<span class="aside">한 잔도 비우지 않은 잔이었다.</span>',
+       n_bed:'"누워서 잔 게 아니라 앉은 채로 졸았소."',
+       i_cup:'"주, 주량이 약해서 한 잔에도 취하오."<span class="aside">한 잔도 비우지 않은 잔이었다.</span>',
+       i_shoes:'"내 신을 왜 들고 다니시오! ...아침에 뒷간 다녀오다 묻었소."<span class="aside">뒷간 가는 길은 사랑채 마당이고, 마당은 바싹 말라 있다.</span>',
+       i_stub:'"글을 읽느라 초를 늦게까지 켰을 뿐이오."<span class="aside">술에 취해 잤다던 사람이?</span>',
+       n_shoes:'"아침에 뒷간 다녀오다 묻었소."<span class="aside">뒷간 가는 길은 사랑채 마당이고, 마당은 바싹 말라 있다.</span>',
+       n_prints:'"뒷마당이라니, 나는 안채 쪽엔 발도 들인 적 없소."',
+       i_jade:'김 서생의 얼굴이 하얗게 질린다. "그, 그걸 어디서..."',
+       i_wrap:'김 서생이 종이를 힐끗 보더니 눈을 피한다.',
+       d_lie:'"...앉아서 졸았다니까 그러오!" 목소리가 떨린다.'
+     }, other:'"그게 나와 무슨 상관이오."'},
+    {id:'dolsoe', name:'돌쇠', sub:'머슴', talk:'t_dolsoe',
+     line:'"해시엔 뒷마당에서 장작 팼습죠. 내일 잔치 땔감이라고 마님이 시키셔서요. 사랑채 담 쪽에서 뭐가 쿵 떨어지는 소리가 났는데, 고양이겠거니 했습니다요."',
+     show:{
+       n_prints:'JAR', n_tile:'JAR', d_wall:'JAR', n_shoes:'JAR', i_shoes:'JAR', d_shoe:'JAR',
+       i_axe:'"제 도끼는 왜 가져가셨습니까요? 장작 패는 데만 씁죠. 그 날로 작은 못은 어림도 없습니다요."',
+       i_nails:'"이 작은 못을 도끼로요? 도끼날이 들어가지도 않습니다요."',
+       n_axe:'"제 도끼야 장작 패는 데만 씁죠. 어젯밤에도 저기 박아 두고 잤습니다요."',
+       n_cup:'"상 물리러 갔더니 술이 그대로였습죠. 아까운 술을."',
+       i_knife:'"그런 작은 칼은 양반 나리들 물건이지요."',
+       i_jade:'"아이고, 찾으셨구먼요! 마님이 얼마나 기뻐하실지."'
+     }, other:'"글쎄요, 저는 잘 모르겠습니다요."'},
+    {id:'kkeut', name:'끝순', sub:'침모', talk:'t_kkeut',
+     line:'"자개함 열쇠는 제가 맡고 있어요. 하지만 어제 저녁 내내 행랑방에서 마님 생신 저고리를 지었어요. 열쇠는 보세요, 아직 제 허리춤에 있잖아요."',
+     show:{
+       t_cook:'"기름 받으러 잠깐 나간 건 맞아요. 부엌만 다녀왔어요. 안채 쪽엔 가지도 않았어요."',
+       i_ring:{give:'t_kkeut2', say:'끝순의 얼굴이 빨개진다. "그, 그건... 박씨 아주머니한테 외상으로 산 거예요. 마님께 들킬까 봐 숨겨 뒀어요. 비녀랑은 정말 상관없어요!"'},
+       i_fake:{give:'t_desc', say:'"이건 마님 비녀가 아니에요. 마님 건 진짜 비취라 묵직하고, 머리 쪽에 봉황이 새겨져 있어요. 이건 그냥 유리 구슬이네요."'},
+       i_jade:'"마님 비녀예요! 봉황 꼬리까지 그대로예요!"',
+       i_wax:'"밀초요? 저희 방엔 그런 거 없어요. 비싸서 못 써요."',
+       i_stub:'"밀초요? 저희 방엔 그런 거 없어요. 비싸서 못 써요."',
+       i_box:'"경첩을요? 열쇠가 있는데 제가 왜 그런 짓을 해요."'
+     }, other:'"잘 모르겠어요..."'},
+    {id:'park', name:'박씨', sub:'방물장수', talk:'t_park',
+     line:'"어제 낮에 마님께 비녀 닦는 법을 일러드리고 술시에 나왔습지요. 그 옥이 워낙 상품이라 장안에서 팔면 쌀 서른 섬은 받는다고 말씀드렸는데, 그때 사랑채 나리도 옆에서 듣고 계셨지요."',
+     show:{
+       i_fake:{give:'t_park_fake', say:'"어머, 내 물건이네! 어제 나가면서 보따리를 풀었다 묶었다 하다 흘렸나 보오. 그건 유리 구슬 비녀요. 엽전 몇 닢짜리."'},
+       i_ring:{give:'t_park_ring', say:'"끝순이한테 외상으로 판 가락지요. 오늘 그 돈 받으러 왔지."'},
+       i_debt:{give:'t_pawn', say:'"종로 전당포? 거기는 출처 안 묻고 물건 받아 주는 데로 소문난 집이오. 훔친 물건 처분하기엔 딱이지."'},
+       i_jade:'"바로 이거요! 이 봉황 좀 보시오. 쌀 서른 섬도 싸지."',
+       t_gate:'"그럼요, 문 닫기 전에 나왔지요. 문지기 양반이 졸면서도 손은 흔들어 줍디다."'
+     }, other:'"방물장수가 그런 걸 어찌 알겠소."'}
+  ];
+
+  const isClue = s => !!(s.give && s.give.length) || (s.take||[]).some(i=>!E[i].junk);
+  const ALL_FINDS = PLACES.reduce((n,p)=>n+p.spots.filter(isClue).length,0);
+
+  // ---------- 상태 ----------
+  const KEY='jd-case1-v2';
+  const blank = ()=>({have:[], deds:[], found:[], looked:[], visited:[], flags:{}, talked:[], q:{}, done:false});
+  let S = blank();
+  try{ const d=JSON.parse(localStorage.getItem(KEY)); if(d && Array.isArray(d.have)) S=Object.assign(blank(), d); }catch(e){}
+  // 예전 기록 정리: 사라진 항목은 버리고, 자개함은 소지품으로 옮김
+  if(S.found.includes('anbang:box') && !S.have.includes('i_box')) S.have.push('i_box');
+  S.have = S.have.filter(i=>E[i]); S.deds = S.deds.filter(d=>DEDS[d]);
+  const save = ()=>{ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} };
+  const $ = id => document.getElementById(id);
+  let sel = [], lookId = null;
+
+  const label = id => id.startsWith('d_') ? DEDS[id].name : (E[id].name || E[id].text);
+  function gain(ids){
+    const fresh = ids.filter(i=>!S.have.includes(i));
+    S.have.push(...fresh);
+    return fresh;
+  }
+  let toastT;
+  function toast(head, body, plain){
+    const t=$('toast'); t.className='toast'+(plain?' plain':''); t.innerHTML='<b>'+head+'</b>'+body; t.hidden=false;
+    clearTimeout(toastT); toastT=setTimeout(()=>{ t.hidden=true; }, 3200);
+  }
+
+  // ---------- 화면 그리기 ----------
+  function renderTop(){
+  }
+  function renderCards(){
+    $('rooms').innerHTML='';
+    for(const p of PLACES){
+      const tot=p.spots.filter(isClue).length, got=p.spots.filter(s=>isClue(s) && S.found.includes(p.id+':'+s.id)).length;
+      const b=document.createElement('button'); b.className='card'; b.type='button'; b.id='c-'+p.id;
+      b.innerHTML='<div class="pic" style="background-image:url('+IMG[p.id]+')"></div><div class="cap"><span>'+p.name+'</span><small>'+(S.visited.includes(p.id)?'살펴봄':'')+'</small></div>';
+      b.addEventListener('click',()=>enterPlace(p));
+      $('rooms').appendChild(b);
+    }
+    $('people').innerHTML='';
+    for(const p of PEOPLE){
+      const b=document.createElement('button'); b.className='card'; b.type='button'; b.id='c-'+p.id;
+      b.innerHTML='<div class="pic" style="background-image:url('+IMG[p.id]+')"></div><div class="cap"><span>'+p.name+'</span><small>'+p.sub+'</small></div>';
+      b.addEventListener('click',()=>openTalk(p));
+      $('people').appendChild(b);
+    }
+  }
+  function renderDesk(){
+    const notes = S.have.filter(i=>!i.startsWith('i_'));
+    $('notes').innerHTML = notes.map(i=>'<li><button class="note'+(sel.includes(i)?' sel':'')+'" data-id="'+i+'"><span class="kind">'+E[i].kind+'</span>'+tm(E[i].text)+'</button></li>').join('');
+    $('notesEmpty').hidden = notes.length>0;
+    $('deds').innerHTML = S.deds.map(d=>'<li><button class="note ded'+(sel.includes(d)?' sel':'')+'" data-id="'+d+'"><span class="kind">추리 · '+DEDS[d].name+'</span>'+tm(DEDS[d].text)+'</button></li>').join('');
+    $('dedsEmpty').hidden = S.deds.length>0;
+    const items = S.have.filter(i=>i.startsWith('i_'));
+    let h = items.map(i=>'<button class="item'+(sel.includes(i)?' sel':'')+'" data-id="'+i+'" title="'+E[i].text+'">'+icon(i)+'<span>'+E[i].name+'</span></button>').join('');
+    for(let k=items.length;k<Math.max(6,items.length);k++) h+='<div class="slot" aria-hidden="true"></div>';
+    $('items').innerHTML = h;
+    if(lookId && E[lookId] && S.have.includes(lookId)) $('look').innerHTML='<b>'+E[lookId].name+'</b>'+E[lookId].text+' <span class="empty">('+E[lookId].kind+'에서 찾음)</span> <button class="btn small" data-drop="'+lookId+'">소지품에서 빼기</button>';
+    else $('look').innerHTML='<span class="empty">'+(items.length?'물건을 누르면 자세히 살펴봅니다.':'현장에서 챙긴 물건이 여기에 모입니다.')+'</span>';
+    renderCombine();
+  }
+  function renderCombine(){
+    $('combine').hidden = sel.length===0;
+    $('pick').innerHTML = sel.length ? sel.map(i=>'<em>'+short(label(i))+'</em>').join('<i>＋</i>') + (sel.length<2?'<i>＋</i><span style="opacity:.6">하나 더 고르세요</span>':'') : '';
+    $('combineBtn').disabled = sel.length<2;
+  }
+  const short = s => s.length>22 ? s.slice(0,21)+'…' : s;
+  function toggleSel(id){
+    if(sel.includes(id)) sel=sel.filter(x=>x!==id);
+    else { sel.push(id); if(sel.length>2) sel.shift(); }
+    if(id.startsWith('i_')) lookId=id;
+    renderDesk();
+  }
+  $('notes').addEventListener('click',e=>{ const b=e.target.closest('[data-id]'); if(b) toggleSel(b.dataset.id); });
+  $('deds').addEventListener('click',e=>{ const b=e.target.closest('[data-id]'); if(b) toggleSel(b.dataset.id); });
+  $('items').addEventListener('click',e=>{ const b=e.target.closest('[data-id]'); if(b) toggleSel(b.dataset.id); });
+  $('clearBtn').addEventListener('click',()=>{ sel=[]; renderDesk(); });
+  $('look').addEventListener('click',e=>{ const b=e.target.closest('[data-drop]'); if(b) toggleItem(b.dataset.drop); });
+  $('combineBtn').addEventListener('click',()=>{
+    if(sel.length<2) return;
+    const d = PAIR[[...sel].sort().join('+')];
+    if(!d) toast('맞지 않음','두 가지는 서로 이어지지 않는 것 같다.', true);
+    else if(S.deds.includes(d)) toast('이미 아는 사실', DEDS[d].name, true);
+    else { S.deds.push(d); save(); toast('새 추리', tm(DEDS[d].text)); }
+    sel=[]; renderAll();
+  });
+  function renderAll(){ renderTop(); renderCards(); renderDesk(); if(!$('accuse').hidden) renderAccuse(); renderVerdict(); $('accuseBtn').parentElement.hidden=S.done; }
+
+  // ---------- 현장 ----------
+  let cur=null, retFocus=null;
+  function enterPlace(p){
+    cur=p; retFocus=document.activeElement;
+    if(!S.visited.includes(p.id)){ S.visited.push(p.id); save(); }
+    const f=$('frame'); f.style.backgroundImage='url('+IMG[p.id]+')';
+    f.innerHTML = p.spots.map(s=>{
+      const [x,y,w,h]=s.r;
+      return '<button class="hs'+(S.looked.includes(p.id+':'+s.id)?' got':'')+'" data-spot="'+s.id+'" aria-label="'+s.label+'" style="left:'+(x/15.36)+'%;top:'+(y/10.24)+'%;width:'+(w/15.36)+'%;height:'+(h/10.24)+'%"></button>';
+    }).join('');
+    $('sTitle').textContent=p.name; $('say').innerHTML='<p><b>'+p.name+'</b>'+tm(p.intro)+'</p>';
+    $('scene').hidden=false; document.body.style.overflow='hidden';
+    fit(); count(); $('exitBtn').focus();
+  }
+  function fit(){
+    if(!cur) return;
+    const st=$('stage'); const w=Math.min(st.clientWidth-16, (st.clientHeight-16)*1.5);
+    $('frame').style.width=Math.max(200,w)+'px';
+  }
+  function count(){
+    const tot=cur.spots.filter(isClue).length, got=cur.spots.filter(s=>isClue(s) && S.found.includes(cur.id+':'+s.id)).length;
+    $('sCount').textContent='';
+  }
+  let curSpot=null;
+  $('frame').addEventListener('click',e=>{ const b=e.target.closest('.hs'); if(b) inspect(b); });
+  function inspect(b){
+    const s=cur.spots.find(x=>x.id===b.dataset.spot), key=cur.id+':'+s.id;
+    if(s.need && !S.flags[s.need]){ curSpot=null; $('say').innerHTML='<p><b>'+s.label+'</b>'+s.locked+'</p>'; return; }
+    curSpot=s; let extra='';
+    if(isClue(s) && !S.found.includes(key)) S.found.push(key);
+    if(!S.looked.includes(key)){ S.looked.push(key); b.classList.add('got'); }
+    if(s.give){ const fresh=gain(s.give); extra = fresh.length ? '<p class="new">수첩에 적었다.</p>' : '<p class="old">이미 수첩에 적은 내용이다.</p>'; }
+    save(); count(); renderAll();
+    $('say').innerHTML='<p><b>'+s.label+'</b>'+tm(s.text)+'</p>'+extra+'<div class="takes" id="takes">'+takeHtml(s)+'</div>';
+  }
+  function takeHtml(s){
+    return (s.take||[]).map(i=>{
+      const has=S.have.includes(i);
+      return '<div class="take">'+icon(i)+'<span>'+E[i].name+'</span><button class="btn small'+(has?'':' primary')+'" data-take="'+i+'">'+(has?'소지품에서 빼기':'소지품에 넣기')+'</button></div>';
+    }).join('');
+  }
+  function toggleItem(i){
+    if(S.have.includes(i)){ S.have=S.have.filter(x=>x!==i); sel=sel.filter(x=>x!==i); if(lookId===i) lookId=null; toast('뺐다','「'+E[i].name+'」을(를) 제자리에 두었다.', true); }
+    else { S.have.push(i); lookId=i; toast('챙겼다','「'+E[i].name+'」을(를) 소지품에 넣었다.'); }
+    save(); renderAll();
+    if(curSpot && $('takes')) $('takes').innerHTML=takeHtml(curSpot);
+  }
+  $('say').addEventListener('click',e=>{ const b=e.target.closest('[data-take]'); if(b) toggleItem(b.dataset.take); });
+  function closeScene(){ $('scene').hidden=true; document.body.style.overflow=''; cur=null; if(retFocus) retFocus.focus({preventScroll:true}); }
+  $('exitBtn').addEventListener('click',closeScene);
+  addEventListener('resize',fit);
+  try{ new ResizeObserver(fit).observe($('stage')); }catch(e){}
+
+  // ---------- 심문 ----------
+  let who=null;
+  function openTalk(p){
+    who=p; retFocus=document.activeElement;
+    $('tTitle').textContent=p.name; $('tSub').textContent=p.sub;
+    $('tImg').src=IMG[p.id]; $('tImg').alt=p.name+' 초상';
+    $('tSay').innerHTML = S.talked.includes(p.id) ? '<p class="aside">무엇을 물어볼까?</p>' : '<p>'+tm(p.line)+'</p>'+firstTalk(p);
+    $('tShow').hidden=true;
+    $('talkScene').hidden=false; document.body.style.overflow='hidden'; $('tExit').focus();
+  }
+  function firstTalk(p){
+    if(S.talked.includes(p.id)) return '';
+    S.talked.push(p.id); gain([p.talk]); save(); renderAll();
+    return '<p class="aside" style="color:var(--seal)">수첩에 진술을 적었다.</p>';
+  }
+  $('tAsk').addEventListener('click',()=>{ $('tSay').innerHTML='<p>'+tm(who.line)+'</p>'+firstTalk(who); });
+  $('tShowBtn').addEventListener('click',()=>{
+    const list=[...S.have.filter(i=>i.startsWith('i_')), ...S.have.filter(i=>!i.startsWith('i_')), ...S.deds];
+    $('tChips').innerHTML = list.length ? list.map(i=>'<button class="chip'+(i.startsWith('i_')?' it':'')+'" data-id="'+i+'">'+short(label(i))+'</button>').join('') : '<p class="empty">보여 줄 것이 아직 없습니다.</p>';
+    $('tShow').hidden=!$('tShow').hidden;
+  });
+  $('tChips').addEventListener('click',e=>{
+    const b=e.target.closest('[data-id]'); if(!b) return;
+    const id=b.dataset.id; let r=who.show[id], extra='';
+    if(r==='JAR'){
+      r='"굽 있는 신 자국이라굽쇼? 저희 하인들은 다 짚신입니다요. ...아, 그러고 보니 오늘 새벽 장 뜨러 갔더니 큰 된장독 뚜껑이 비뚤게 덮여 있었습죠. 진흙 손자국 같은 게 묻어 있어서 이상하다 했는데, 바빠서 그냥 바로 덮어 놨습니다요."';
+      r={give:'t_dolsoe2', say:r};
+      if(!S.flags.jarhint){ S.flags.jarhint=true; extra='<p class="aside" style="color:var(--seal)">뒷마당 장독대를 다시 살펴볼 만하다.</p>'; }
+    }
+    if(r && typeof r==='object'){
+      const fresh=gain([r.give]); if(fresh.length) extra+='<p class="aside" style="color:var(--seal)">수첩에 진술을 적었다.</p>';
+      r=r.say; save(); renderAll();
+    }
+    $('tSay').innerHTML='<p class="aside">「'+short(label(id))+'」을(를) 보여 주었다.</p><p>'+tm(r||who.other)+'</p>'+extra;
+    $('tShow').hidden=true;
+  });
+  function closeTalk(){ $('talkScene').hidden=true; document.body.style.overflow=''; who=null; if(retFocus) retFocus.focus({preventScroll:true}); }
+  $('tExit').addEventListener('click',closeTalk);
+  document.addEventListener('keydown',e=>{ if(e.key!=='Escape') return; if(cur) closeScene(); else if(who) closeTalk(); else if(sel.length){ sel=[]; renderDesk(); } });
+
+  // ---------- 지목과 판결 ----------
+  function opts(el, list, key, kind){
+    el.innerHTML='';
+    if(!list.length){ el.innerHTML='<p class="empty">'+(kind==='ded'?'아직 세운 추리가 없습니다.':'소지품이 없습니다.')+'</p>'; return; }
+    for(const o of list){
+      const b=document.createElement('button'); b.type='button'; b.className='opt'; b.id=key+'-'+o.id;
+      b.innerHTML = (o.img?'<img src="'+o.img+'" alt="">':'') + o.name;
+      b.setAttribute('aria-pressed', String(S.q[key]===o.id));
+      b.addEventListener('click',()=>{ S.q[key]=o.id; save(); renderAccuse(); });
+      el.appendChild(b);
+    }
+  }
+  function renderAccuse(){
+    opts($('q1'), PEOPLE.map(p=>({id:p.id, name:p.name+' ('+p.sub+')', img:IMG[p.id]})), 'q1');
+    const ded = S.deds.map(d=>({id:d, name:DEDS[d].name}));
+    for(const k of ['q2','q3','q4','q5']) opts($(k), ded, k, 'ded');
+    opts($('q6'), S.have.filter(i=>i.startsWith('i_')).map(i=>({id:i, name:E[i].name})), 'q6');
+    $('submitBtn').disabled = !['q1','q2','q3','q4','q5','q6'].every(k=>S.q[k]);
+  }
+  function renderVerdict(){
+    const v=$('verdict');
+    if(!S.done){ v.hidden=true; return; }
+    const q=S.q;
+    const r = {
+      who: q.q1==='kim', how: q.q2==='d_pry', where: ['d_wax','d_shoe'].includes(q.q3),
+      lie: q.q4==='d_lie', why: q.q5==='d_motive', pin: q.q6==='i_jade', paper: S.deds.includes('d_paper')
+    };
+    const core=[r.how,r.where,r.lie,r.why].filter(Boolean).length;
+    let title, seal, lead;
+    if(!r.who){ title='오판'; seal='誤<br>判'; lead='엉뚱한 사람이 포도청에 끌려갔습니다. 그날 밤, 김 서생은 장독에서 비녀를 꺼내 종로 전당포로 사라졌습니다.'; }
+    else if(core===4 && r.pin && r.paper){ title='명탐정'; seal='名<br>探'; lead='김 서생은 비녀를 싼 종이와 찢긴 서책을 나란히 놓자 무릎을 꿇었습니다. 비녀는 마님 머리로 돌아갔고, 잔치는 예정대로 열립니다.'; }
+    else if(core>=3 && r.pin){ title='해결'; seal='解<br>決'; lead='비녀를 되찾았고 김 서생도 결국 자백했습니다. 다만 몇 가지 근거가 빈약해 참판 어른이 고개를 갸웃하십니다.'; }
+    else { title='반쯤 맞힘'; seal='未<br>結'; lead='범인은 맞혔지만 근거가 모자라 김 서생이 끝까지 버팁니다. '+(r.pin?'비녀를 찾은 것이 그나마 다행입니다.':'비녀의 행방도 묘연합니다.'); }
+    const li=(ok,t)=>'<li class="'+(ok?'o':'x')+'">'+(ok?'○':'×')+' '+t+'</li>';
+    v.innerHTML='<div class="seal" aria-hidden="true">'+seal+'</div><div class="head"><h2>'+title+'</h2><p>'+lead+'</p></div>'
+      +'<ul class="score">'+li(r.who,'범인')+li(r.how,'수법: 은장도로 경첩을 뜯음')+li(r.where,'안방에 다녀간 증거')+li(r.lie,'거짓말')+li(r.why,'동기')+li(r.pin,'비녀 회수')+li(r.paper,'비녀를 싼 종이의 주인')
+      +'<li>세운 추리 '+S.deds.length+'개</li></ul>'
+      +'<h2 style="font-size:22px">사건의 전말</h2>'
+      +'<p>김 서생은 과거 공부를 핑계로 참판 댁에 얹혀살며 종로 전당포에 빚을 졌습니다. 갚을 날은 오늘이었지요. 어제 낮, 박씨가 마님께 비녀가 쌀 서른 섬 값이라고 하는 말을 옆에서 들었습니다.</p>'
+      +'<p>해시(밤 9~11시), 대문이 잠기고 마님이 대청으로 가자 김 서생은 밀초를 들고 가죽신을 신은 채 사랑채 담을 넘었습니다. 기와가 깨지는 소리를 돌쇠가 들었지만 고양이인 줄 알았지요. 열쇠가 없으니 은장도로 자개함 경첩 못을 비틀어 뽑았고, 그때 칼끝이 휘었습니다. 문지방 앞에는 밀초 촛농이 떨어졌습니다.</p>'
+      +'<p>돌아오는 길, 도끼 소리가 담 쪽으로 다가오자 겁이 난 김 서생은 서책 맨 뒷장을 찢어 비녀를 싸고 된장독에 숨겼습니다. 오늘 밤 꺼내 전당포에 맡길 셈이었지요. 술에 취해 잤다는 말은 처음부터 거짓이었습니다.</p>'
+      +'<p>끝순의 가락지와 대문간의 유리 비녀는 사건과 관계없는 일이었습니다.</p>'
+      +'<div class="row"><button class="btn primary" id="restartBtn">처음부터 다시</button></div>';
+    v.hidden=false;
+    $('restartBtn').addEventListener('click',()=>{ S=blank(); sel=[]; lookId=null; save(); $('accuse').hidden=true; renderAll(); scrollTo({top:0,behavior:'smooth'}); });
+  }
+  $('accuseBtn').addEventListener('click',()=>{ $('accuse').hidden=false; renderAccuse(); $('accuse').scrollIntoView({behavior:'smooth'}); });
+  $('backBtn').addEventListener('click',()=>{ $('accuse').hidden=true; scrollTo({top:0,behavior:'smooth'}); });
+  $('submitBtn').addEventListener('click',()=>{ S.done=true; save(); $('accuse').hidden=true; renderAll(); $('verdict').scrollIntoView({behavior:'smooth'}); });
+
+  renderAll();
+  window.__jd = {S:()=>S, PLACES, PEOPLE, DEDS, PAIR};
+})();
+</script>

@@ -1,0 +1,459 @@
+<title>조선 탐정 사무소</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Song+Myung&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+/*CSS*/
+/* 사건 목록 */
+.office-head{display:flex; justify-content:space-between; align-items:flex-end; gap:16px; flex-wrap:wrap; border-bottom:2px solid var(--ink); padding-bottom:14px}
+.cases{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; margin-top:24px}
+@media (max-width:700px){.cases{grid-template-columns:1fr}}
+.case{background:var(--sheet); border:1px solid var(--rule); border-radius:3px; padding:0; cursor:pointer; text-align:left; overflow:hidden; display:flex; flex-direction:column; position:relative}
+.case:hover{border-color:var(--indigo)}
+.case .pic{aspect-ratio:3/2; background-size:cover; background-position:center}
+.case .body{padding:14px 16px 16px}
+.case .no{font-family:var(--display); color:var(--faint); font-size:14px}
+.case h2{font-size:26px; margin:2px 0 6px}
+.case p{margin:0; font-size:15px; color:var(--faint)}
+.case .stamp{position:absolute; top:12px; right:12px; border:2px solid var(--seal); color:var(--seal); font-family:var(--display); padding:2px 8px; transform:rotate(-6deg); background:var(--sheet); font-size:15px}
+.case .stamp.going{border-color:var(--indigo); color:var(--indigo)}
+.lead-intro{max-width:64ch; margin:18px 0 0; font-size:17px}
+.back{margin-left:auto}
+/* 그림이 아직 없을 때 */
+.pic.ph, .frame.ph{background-color:var(--paper); background-image:repeating-linear-gradient(45deg, transparent 0 14px, rgba(128,128,128,.07) 14px 15px)}
+.pic.ph{display:grid; place-items:center; color:var(--faint); font-family:var(--display); font-size:15px}
+.frame.ph{border:1px dashed var(--rule)}
+.frame.ph .hs{box-shadow:inset 0 0 0 1px var(--rule); background:rgba(128,128,128,.05); color:var(--faint); font-size:13px; display:grid; place-items:center; text-align:center; padding:4px; line-height:1.3}
+.frame.ph::before{content:"그림 준비 중"; position:absolute; left:50%; top:8px; transform:translateX(-50%); font-family:var(--display); color:var(--faint); font-size:14px}
+.portrait-ph{aspect-ratio:1; border:1px dashed var(--rule); border-radius:3px; display:grid; place-items:center; font-family:var(--display); font-size:44px; color:var(--faint); background:var(--paper)}
+</style>
+
+<div class="wrap">
+  <!-- 사건 목록 -->
+  <section id="lobby">
+    <div class="office-head">
+      <div>
+        <p class="office">한양 북촌 골목 끝, 간판 없는 사무소</p>
+        <h1>조선 탐정 사무소</h1>
+      </div>
+    </div>
+    <p class="lead-intro">맡을 사건을 고르세요. 사건마다 수사 기록은 따로 남고, 언제든 이어서 할 수 있어요.</p>
+    <div class="cases" id="cases"></div>
+  </section>
+
+  <!-- 사건 화면 -->
+  <section id="game" hidden>
+    <header>
+      <div>
+        <p class="office" id="caseNo"></p>
+        <h1 id="caseTitle"></h1>
+      </div>
+      <button class="btn back" id="lobbyBtn">사건 목록</button>
+    </header>
+
+    <section class="brief">
+      <div class="story" id="story"></div>
+      <aside class="rules">
+        <h3>수사하는 법</h3>
+        <ol>
+          <li>현장 그림에서 수상한 곳을 눌러 보세요. 보고 들은 것은 수첩에 적히고, 물건은 소지품에 넣을지 직접 고릅니다. 쓸모없는 물건도 섞여 있어요.</li>
+          <li>사람에게 이야기를 듣고, 모은 것을 보여 주면 새 이야기가 나옵니다. 현장 속 사람에게 다시 말을 걸면 새 이야기가 나오기도 해요.</li>
+          <li>수첩과 소지품에서 두 가지를 골라 <b>맞춰보기</b>를 하면 추리가 생깁니다.</li>
+          <li>범인을 지목할 때는 추리로만 근거를 댈 수 있어요. 횟수 제한은 없습니다.</li>
+        </ol>
+        <h3 style="margin-top:12px">옛 시각</h3>
+        <p style="margin:0">술시는 저녁 7~9시, 해시는 밤 9~11시입니다.</p>
+      </aside>
+    </section>
+
+    <div class="sec-head"><h2>현장</h2><small>눌러서 들어가 살펴보세요</small></div>
+    <div class="rooms" id="rooms"></div>
+    <div class="sec-head"><h2>심문</h2><small>모은 것을 보여 줄 수 있어요</small></div>
+    <div class="people" id="people"></div>
+
+    <div class="desk">
+      <section class="panel">
+        <h2>수첩 <small>눌러서 고르기</small></h2>
+        <h3>단서와 진술</h3>
+        <ul class="notes" id="notes"></ul>
+        <p class="empty" id="notesEmpty">아직 적은 것이 없습니다.</p>
+        <h3>추리</h3>
+        <ul class="notes" id="deds"></ul>
+        <p class="empty" id="dedsEmpty">두 가지를 골라 맞춰 보면 추리가 여기에 적힙니다.</p>
+      </section>
+      <section class="panel">
+        <h2>소지품 <small>눌러서 살펴보고 고르기</small></h2>
+        <div class="items" id="items"></div>
+        <div class="look" id="look"></div>
+      </section>
+    </div>
+
+    <div class="accuse-row" id="accuseRow"><button class="btn primary big" id="accuseBtn">범인 지목하기</button></div>
+
+    <section class="accuse" id="accuse" hidden>
+      <h2 id="accuseHead">지목</h2>
+      <div id="qs"></div>
+      <div class="row">
+        <button class="btn primary" id="submitBtn" disabled>이대로 고하기</button>
+        <button class="btn" id="backBtn">더 조사하기</button>
+      </div>
+    </section>
+
+    <section class="verdict" id="verdict" hidden></section>
+  </section>
+</div>
+
+<div class="combine" id="combine" hidden>
+  <div>
+    <div class="pick" id="pick"></div>
+    <button class="cbtn primary" id="combineBtn">맞춰보기</button>
+    <button class="cbtn" id="clearBtn">선택 해제</button>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden role="status"></div>
+
+<div class="scene" id="scene" hidden role="dialog" aria-modal="true" aria-labelledby="sTitle">
+  <div class="s-top">
+    <h2 id="sTitle"></h2>
+    <span class="count" id="sCount"></span>
+    <button class="btn" id="exitBtn">나가기</button>
+  </div>
+  <div class="stage" id="stage"><div class="frame" id="frame"></div></div>
+  <div class="s-say" aria-live="polite"><div id="say"></div></div>
+</div>
+
+<div class="scene" id="talkScene" hidden role="dialog" aria-modal="true" aria-labelledby="tTitle">
+  <div class="s-top">
+    <h2 id="tTitle"></h2>
+    <span class="count" id="tSub"></span>
+    <button class="btn" id="tExit">나가기</button>
+  </div>
+  <div class="stage talkstage">
+    <div class="talk">
+      <div id="tPic"></div>
+      <div>
+        <div class="say" id="tSay" aria-live="polite"></div>
+        <div class="acts">
+          <button class="btn" id="tAsk">이야기 듣기</button>
+          <button class="btn primary" id="tShowBtn">보여주기</button>
+        </div>
+        <div class="show" id="tShow" hidden>
+          <h3>무엇을 보여 줄까?</h3>
+          <div class="chips" id="tChips"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/*IMAGES*/
+(function(){
+  // ---------- 물건 아이콘 (48×48) ----------
+/*ICON*/
+  Object.assign(ICON, {
+    i_powder:'<path class="s" d="M8 30 Q24 18 40 30 Z"/><path d="M6 30 H42 M10 36 H38"/><path class="k" d="M16 28 Q24 22 32 28 Z"/>',
+    i_packet:'<path class="p" d="M8 14 H40 L24 40 Z"/><path class="g" d="M8 14 L24 26 L40 14 M24 26 V40"/>',
+    i_root:'<path class="k" d="M14 20 Q20 10 30 14 Q40 18 34 28 Q30 36 20 34 Q10 30 14 20 Z" opacity=".85"/><path d="M30 32 Q34 40 32 44 M18 34 Q16 40 12 42"/>',
+    i_cloth:'<path class="w" d="M8 12 L40 10 L42 38 L10 40 Z"/><path class="s" d="M16 20 Q26 16 34 24 Q30 32 20 30 Z"/><circle class="k" cx="24" cy="25" r="1.6"/><circle class="k" cx="29" cy="23" r="1.2"/>',
+    i_fakeroot:'<path class="w" d="M24 6 Q30 10 28 22 Q27 34 24 42 Q21 34 20 22 Q18 10 24 6 Z"/><path d="M24 6 Q22 2 18 4"/>',
+    i_note:'<path class="p" d="M10 10 H38 V38 H10 Z"/><path class="g" d="M15 17 H33 M15 23 H31 M15 29 H25"/><path d="M28 32 q3 -4 6 0 q-2 3 -5 1"/>',
+    i_pouch:'<path class="s" d="M14 18 Q10 36 24 40 Q38 36 34 18 Z"/><path d="M14 18 Q24 12 34 18"/><path d="M18 16 L30 16"/><circle class="k" cx="24" cy="30" r="2"/>',
+    i_burnt:'<path class="p" d="M10 10 H38 V30 Q34 34 30 30 Q26 38 20 32 Q14 38 10 30 Z"/><path class="k" d="M10 30 Q14 38 20 32 Q26 38 30 30 Q34 34 38 30 V34 Q32 40 26 36 Q18 42 10 36 Z" opacity=".7"/><path class="g" d="M15 16 H33 M15 22 H29"/>',
+    i_pillow:'<rect class="p" x="8" y="20" width="32" height="12" rx="6"/><ellipse class="r" cx="10" cy="26" rx="3" ry="6"/><ellipse class="r" cx="38" cy="26" rx="3" ry="6"/>',
+    i_specs:'<rect class="s" x="8" y="18" width="32" height="14" rx="7"/><path class="g" d="M14 25 H34"/>',
+    i_herbs:'<path class="s" d="M10 34 Q18 20 24 10 M24 34 Q24 22 24 10 M38 34 Q30 20 24 10"/><path d="M8 36 H40"/>',
+    i_book:'<rect class="p" x="10" y="8" width="26" height="34" rx="1"/><path d="M14 8 V42"/><path class="g" d="M10 14 H14 M10 22 H14 M10 30 H14"/>'
+  });
+  ICON.i_gourd2=ICON.i_gourd; ICON.i_bowl2=ICON.i_bowl; ICON.i_yunshoes=ICON.i_shoes;
+  const tm = s => String(s).replace(/술시/g,'술시(저녁 7~9시)').replace(/해시/g,'해시(밤 9~11시)');
+  const icon = id => '<svg class="ic" viewBox="0 0 48 48" aria-hidden="true">'+(ICON[id]||'')+'</svg>';
+
+  // ================= 1편: 사라진 봉황 옥비녀 =================
+  const CASE1 = (function(){
+/*C1DATA*/
+  const JAR = {flag:'jarhint', give:'t_dolsoe2', hint:'뒷마당 장독대를 다시 살펴볼 만하다.',
+    say:'"굽 있는 신 자국이라굽쇼? 저희 하인들은 다 짚신입니다요. ...아, 그러고 보니 오늘 새벽 장 뜨러 갔더니 큰 된장독 뚜껑이 비뚤게 덮여 있었습죠. 진흙 손자국 같은 게 묻어 있어서 이상하다 했는데, 바빠서 그냥 바로 덮어 놨습니다요."'};
+  for(const p of PEOPLE) for(const k in p.show) if(p.show[k]==='JAR') p.show[k]=JAR;
+  return {
+    id:'c1', no:'첫 번째 사건', title:'사라진 봉황 옥비녀', thumb:'anbang', key:'jd-case1-v2',
+    blurb:'참판 댁 마님의 생신 비녀가 자개함에서 사라졌다. 방을 뒤져 범인을 밝히고 비녀까지 되찾아라.',
+    story:[
+      '한양 북촌 골목 끝, 간판도 없이 문을 연 조선 탐정 사무소. 오늘 아침 윤 참판 댁 청지기가 헐레벌떡 찾아왔습니다.',
+      '내일은 마님의 쉰 번째 생신입니다. 잔치 날 꽂으려고 아껴 둔 봉황 옥비녀가 어젯밤 안방 자개함에서 감쪽같이 사라졌습니다. 참판 어른은 소문이 나기 전에 조용히 범인을 밝히고, 비녀까지 되찾아 달라고 하십니다.',
+      '어젯밤 집 안팎을 오간 사람은 넷입니다. 사랑채에 묵는 먼 친척 김 서생, 머슴 돌쇠, 자개함 열쇠를 맡은 침모 끝순, 낮에 다녀간 방물장수 박씨. 박씨는 오늘 아침 외상값을 받으러 다시 와 있습니다. 대문은 해시 초에 잠겼고, 그 시각 마님은 대청에서 잔치 준비를 하느라 안방을 비웠습니다.'
+    ],
+    E, DEDS, PLACES, PEOPLE,
+    Q:[
+      {key:'q1', type:'who', title:'비녀를 훔친 사람은 누구인가?'},
+      {key:'q2', type:'ded', title:'자개함은 어떻게 열렸나?'},
+      {key:'q3', type:'ded', title:'범인이 어젯밤 안방에 다녀갔다는 증거는?'},
+      {key:'q4', type:'ded', title:'범인은 어떤 거짓말을 했나?'},
+      {key:'q5', type:'ded', title:'왜 훔쳤나?'},
+      {key:'q6', type:'item', title:'비녀는 지금 어디 있나?'}
+    ],
+    judge(S){
+      const q=S.q;
+      const r={who:q.q1==='kim', how:q.q2==='d_pry', where:['d_wax','d_shoe'].includes(q.q3), lie:q.q4==='d_lie', why:q.q5==='d_motive', pin:q.q6==='i_jade', paper:S.deds.includes('d_paper')};
+      const core=[r.how,r.where,r.lie,r.why].filter(Boolean).length;
+      let v;
+      if(!r.who) v={title:'오판', seal:'誤<br>判', lead:'엉뚱한 사람이 포도청에 끌려갔습니다. 그날 밤, 김 서생은 장독에서 비녀를 꺼내 종로 전당포로 사라졌습니다.'};
+      else if(core===4 && r.pin && r.paper) v={title:'명탐정', seal:'名<br>探', lead:'김 서생은 비녀를 싼 종이와 찢긴 서책을 나란히 놓자 무릎을 꿇었습니다. 비녀는 마님 머리로 돌아갔고, 잔치는 예정대로 열립니다.'};
+      else if(core>=3 && r.pin) v={title:'해결', seal:'解<br>決', lead:'비녀를 되찾았고 김 서생도 결국 자백했습니다. 다만 몇 가지 근거가 빈약해 참판 어른이 고개를 갸웃하십니다.'};
+      else v={title:'반쯤 맞힘', seal:'未<br>結', lead:'범인은 맞혔지만 근거가 모자라 김 서생이 끝까지 버팁니다. '+(r.pin?'비녀를 찾은 것이 그나마 다행입니다.':'비녀의 행방도 묘연합니다.')};
+      v.rows=[[r.who,'범인'],[r.how,'수법: 은장도로 경첩을 뜯음'],[r.where,'안방에 다녀간 증거'],[r.lie,'거짓말'],[r.why,'동기'],[r.pin,'비녀 회수'],[r.paper,'비녀를 싼 종이의 주인']];
+      return v;
+    },
+    truth:[
+      '김 서생은 과거 공부를 핑계로 참판 댁에 얹혀살며 종로 전당포에 빚을 졌습니다. 갚을 날은 오늘이었지요. 어제 낮, 박씨가 마님께 비녀가 쌀 서른 섬 값이라고 하는 말을 옆에서 들었습니다.',
+      '해시, 대문이 잠기고 마님이 대청으로 가자 김 서생은 밀초를 들고 가죽신을 신은 채 사랑채 담을 넘었습니다. 기와가 깨지는 소리를 돌쇠가 들었지만 고양이인 줄 알았지요. 열쇠가 없으니 은장도로 자개함 경첩 못을 비틀어 뽑았고, 그때 칼끝이 휘었습니다. 문지방 앞에는 밀초 촛농이 떨어졌습니다.',
+      '돌아오는 길, 도끼 소리가 담 쪽으로 다가오자 겁이 난 김 서생은 서책 맨 뒷장을 찢어 비녀를 싸고 된장독에 숨겼습니다. 오늘 밤 꺼내 전당포에 맡길 셈이었지요. 술에 취해 잤다는 말은 처음부터 거짓이었습니다.',
+      '끝순의 가락지와 대문간의 유리 비녀는 사건과 관계없는 일이었습니다.'
+    ]
+  };
+  })();
+
+/*CASE2*/
+
+  const CASES = [CASE1, CASE2];
+
+  // ---------- 공통 상태 ----------
+  const $ = id => document.getElementById(id);
+  const blank = ()=>({have:[], deds:[], found:[], looked:[], visited:[], flags:{}, talked:[], q:{}, done:false});
+  const readState = c => { let s=blank(); try{ const d=JSON.parse(localStorage.getItem(c.key)); if(d && Array.isArray(d.have)) s=Object.assign(blank(), d); }catch(e){} return s; };
+  let C=null, E={}, DEDS={}, PLACES=[], PEOPLE=[], PAIR={}, S=blank();
+  let sel=[], lookId=null;
+  const save = ()=>{ if(!C) return; try{ localStorage.setItem(C.key, JSON.stringify(S)); }catch(e){} };
+  const img = k => (window.IMG && IMG[C.id] && IMG[C.id][k]) || null;
+  const isClue = s => !!(s.give && s.give.length) || (s.take||[]).some(i=>!E[i].junk);
+  const label = id => id.startsWith('d_') ? DEDS[id].name : (E[id].name || E[id].text);
+  const short = s => s.length>22 ? s.slice(0,21)+'…' : s;
+  function gain(ids){ const fresh=ids.filter(i=>!S.have.includes(i)); S.have.push(...fresh); return fresh; }
+  let toastT;
+  function toast(head, body, plain){
+    const t=$('toast'); t.className='toast'+(plain?' plain':''); t.innerHTML='<b>'+head+'</b>'+body; t.hidden=false;
+    clearTimeout(toastT); toastT=setTimeout(()=>{ t.hidden=true; }, 3200);
+  }
+
+  // ---------- 사건 목록 ----------
+  function renderLobby(){
+    $('cases').innerHTML='';
+    for(const c of CASES){
+      const st=readState(c), im=(window.IMG&&IMG[c.id]&&IMG[c.id][c.thumb])||null;
+      const b=document.createElement('button'); b.className='case'; b.type='button'; b.id='case-'+c.id;
+      const stamp = st.done ? '<span class="stamp">해결함</span>' : (st.visited.length||st.talked.length ? '<span class="stamp going">수사 중</span>' : '');
+      b.innerHTML=(im?'<div class="pic" style="background-image:url('+im+')"></div>':'<div class="pic ph">그림 준비 중</div>')+stamp
+        +'<div class="body"><div class="no">'+c.no+'</div><h2>'+c.title+'</h2><p>'+c.blurb+'</p></div>';
+      b.addEventListener('click',()=>openCase(c));
+      $('cases').appendChild(b);
+    }
+  }
+  function openCase(c){
+    C=c; E=c.E; DEDS=c.DEDS; PLACES=c.PLACES; PEOPLE=c.PEOPLE;
+    PAIR={}; for(const [d,v] of Object.entries(DEDS)) for(const p of v.pairs) PAIR[[...p].sort().join('+')]=d;
+    S=readState(c);
+    if(c.id==='c1' && S.found.includes('anbang:box') && !S.have.includes('i_box')) S.have.push('i_box');
+    S.have=S.have.filter(i=>E[i]); S.deds=S.deds.filter(d=>DEDS[d]);
+    sel=[]; lookId=null;
+    try{ localStorage.setItem('jd-last', c.id); }catch(e){}
+    $('caseNo').textContent='조선 탐정 사무소 · '+c.no; $('caseTitle').textContent=c.title;
+    $('story').innerHTML=c.story.map(p=>'<p>'+tm(p)+'</p>').join('');
+    $('accuseHead').textContent=c.id==='c1'?'참판 어른 앞에서':'포도청 종사관 앞에서';
+    $('accuse').hidden=true;
+    $('lobby').hidden=true; $('game').hidden=false;
+    renderAll(); scrollTo({top:0});
+  }
+  $('lobbyBtn').addEventListener('click',()=>{ $('toast').hidden=true; C=null; sel=[]; $('combine').hidden=true; $('game').hidden=true; $('lobby').hidden=false; renderLobby(); scrollTo({top:0}); });
+
+  // ---------- 사건 화면 ----------
+  function renderCards(){
+    $('rooms').innerHTML='';
+    for(const p of PLACES){
+      const im=img(p.id);
+      const b=document.createElement('button'); b.className='card'; b.type='button'; b.id='c-'+p.id;
+      b.innerHTML=(im?'<div class="pic" style="background-image:url('+im+')"></div>':'<div class="pic ph">그림 준비 중</div>')
+        +'<div class="cap"><span>'+p.name+'</span><small>'+(S.visited.includes(p.id)?'살펴봄':'')+'</small></div>';
+      b.addEventListener('click',()=>enterPlace(p));
+      $('rooms').appendChild(b);
+    }
+    $('people').innerHTML='';
+    for(const p of PEOPLE){
+      const im=img(p.id);
+      const b=document.createElement('button'); b.className='card'; b.type='button'; b.id='c-'+p.id;
+      b.innerHTML=(im?'<div class="pic" style="background-image:url('+im+')"></div>':'<div class="pic ph" style="aspect-ratio:1">'+p.name+'</div>')
+        +'<div class="cap"><span>'+p.name+'</span><small>'+p.sub+'</small></div>';
+      b.addEventListener('click',()=>openTalk(p));
+      $('people').appendChild(b);
+    }
+  }
+  function renderDesk(){
+    const notes=S.have.filter(i=>!i.startsWith('i_'));
+    $('notes').innerHTML=notes.map(i=>'<li><button class="note'+(sel.includes(i)?' sel':'')+'" data-id="'+i+'"><span class="kind">'+E[i].kind+'</span>'+tm(E[i].text)+'</button></li>').join('');
+    $('notesEmpty').hidden=notes.length>0;
+    $('deds').innerHTML=S.deds.map(d=>'<li><button class="note ded'+(sel.includes(d)?' sel':'')+'" data-id="'+d+'"><span class="kind">추리 · '+DEDS[d].name+'</span>'+tm(DEDS[d].text)+'</button></li>').join('');
+    $('dedsEmpty').hidden=S.deds.length>0;
+    const items=S.have.filter(i=>i.startsWith('i_'));
+    let h=items.map(i=>'<button class="item'+(sel.includes(i)?' sel':'')+'" data-id="'+i+'" title="'+E[i].text.replace(/"/g,'&quot;')+'">'+icon(i)+'<span>'+E[i].name+'</span></button>').join('');
+    for(let k=items.length;k<Math.max(6,items.length);k++) h+='<div class="slot" aria-hidden="true"></div>';
+    $('items').innerHTML=h;
+    if(lookId && E[lookId] && S.have.includes(lookId)) $('look').innerHTML='<b>'+E[lookId].name+'</b>'+tm(E[lookId].text)+' <span class="empty">('+E[lookId].kind+'에서 찾음)</span> <button class="btn small" data-drop="'+lookId+'">소지품에서 빼기</button>';
+    else $('look').innerHTML='<span class="empty">'+(items.length?'물건을 누르면 자세히 살펴봅니다.':'현장에서 챙긴 물건이 여기에 모입니다.')+'</span>';
+    renderCombine();
+  }
+  function renderCombine(){
+    $('combine').hidden=!C || sel.length===0;
+    $('pick').innerHTML=sel.length ? sel.map(i=>'<em>'+short(label(i))+'</em>').join('<i>＋</i>')+(sel.length<2?'<i>＋</i><span style="opacity:.6">하나 더 고르세요</span>':'') : '';
+    $('combineBtn').disabled=sel.length<2;
+  }
+  function toggleSel(id){
+    if(sel.includes(id)) sel=sel.filter(x=>x!==id); else { sel.push(id); if(sel.length>2) sel.shift(); }
+    if(id.startsWith('i_')) lookId=id;
+    renderDesk();
+  }
+  for(const el of ['notes','deds','items']) $(el).addEventListener('click',e=>{ const b=e.target.closest('[data-id]'); if(b) toggleSel(b.dataset.id); });
+  $('clearBtn').addEventListener('click',()=>{ sel=[]; renderDesk(); });
+  $('look').addEventListener('click',e=>{ const b=e.target.closest('[data-drop]'); if(b) toggleItem(b.dataset.drop); });
+  $('combineBtn').addEventListener('click',()=>{
+    if(sel.length<2) return;
+    const d=PAIR[[...sel].sort().join('+')];
+    if(!d) toast('맞지 않음','두 가지는 서로 이어지지 않는 것 같다.', true);
+    else if(S.deds.includes(d)) toast('이미 아는 사실', DEDS[d].name, true);
+    else { S.deds.push(d); save(); toast('새 추리', tm(DEDS[d].text)); }
+    sel=[]; renderAll();
+  });
+  function renderAll(){
+    if(!C) return;
+    renderCards(); renderDesk();
+    if(!$('accuse').hidden) renderAccuse();
+    renderVerdict(); $('accuseRow').hidden=S.done;
+  }
+
+  // ---------- 현장 ----------
+  let cur=null, curSpot=null, retFocus=null;
+  function enterPlace(p){
+    cur=p; curSpot=null; retFocus=document.activeElement;
+    if(!S.visited.includes(p.id)){ S.visited.push(p.id); save(); }
+    const f=$('frame'), im=img(p.id);
+    f.className='frame'+(im?'':' ph'); f.style.backgroundImage=im?'url('+im+')':'';
+    f.innerHTML=p.spots.map(s=>{
+      const [x,y,w,h]=s.r;
+      return '<button class="hs'+(S.looked.includes(p.id+':'+s.id)?' got':'')+'" data-spot="'+s.id+'" aria-label="'+s.label+'" style="left:'+(x/15.36)+'%;top:'+(y/10.24)+'%;width:'+(w/15.36)+'%;height:'+(h/10.24)+'%">'+(im?'':s.label)+'</button>';
+    }).join('');
+    $('sTitle').textContent=p.name; $('sCount').textContent='';
+    $('say').innerHTML='<p><b>'+p.name+'</b>'+tm(p.intro)+'</p>';
+    $('scene').hidden=false; document.body.style.overflow='hidden';
+    fit(); $('exitBtn').focus();
+  }
+  function fit(){ if(!cur) return; const st=$('stage'); $('frame').style.width=Math.max(200,Math.min(st.clientWidth-16,(st.clientHeight-16)*1.5))+'px'; }
+  $('frame').addEventListener('click',e=>{ const b=e.target.closest('.hs'); if(b) inspect(b); });
+  function inspect(b){
+    const s=cur.spots.find(x=>x.id===b.dataset.spot), key=cur.id+':'+s.id;
+    if(s.need && !S.flags[s.need]){ curSpot=null; $('say').innerHTML='<p><b>'+s.label+'</b>'+tm(s.locked)+'</p>'; return; }
+    curSpot=s;
+    if(isClue(s) && !S.found.includes(key)) S.found.push(key);
+    if(!S.looked.includes(key)){ S.looked.push(key); b.classList.add('got'); }
+    if(s.sets) S.flags[s.sets]=true;
+    const late = s.after && S.flags[s.after.flag];
+    let give=[...(s.give||[])]; if(late) give.push(...s.after.give);
+    let extra='';
+    if(give.length){ const fresh=gain(give); extra = fresh.length ? '<p class="new">수첩에 적었다.</p>' : '<p class="old">이미 수첩에 적은 내용이다.</p>'; }
+    save(); renderAll();
+    $('say').innerHTML='<p><b>'+s.label+'</b>'+tm(late ? s.after.text : s.text)+'</p>'+extra+'<div class="takes" id="takes">'+takeHtml(s)+'</div>';
+  }
+  function takeHtml(s){
+    return (s.take||[]).map(i=>{ const has=S.have.includes(i);
+      return '<div class="take">'+icon(i)+'<span>'+E[i].name+'</span><button class="btn small'+(has?'':' primary')+'" data-take="'+i+'">'+(has?'소지품에서 빼기':'소지품에 넣기')+'</button></div>'; }).join('');
+  }
+  function toggleItem(i){
+    if(S.have.includes(i)){ S.have=S.have.filter(x=>x!==i); sel=sel.filter(x=>x!==i); if(lookId===i) lookId=null; toast('뺐다','「'+E[i].name+'」을(를) 제자리에 두었다.', true); }
+    else { S.have.push(i); lookId=i; toast('챙겼다','「'+E[i].name+'」을(를) 소지품에 넣었다.'); }
+    save(); renderAll();
+    if(curSpot && $('takes')) $('takes').innerHTML=takeHtml(curSpot);
+  }
+  $('say').addEventListener('click',e=>{ const b=e.target.closest('[data-take]'); if(b) toggleItem(b.dataset.take); });
+  function closeScene(){ $('scene').hidden=true; document.body.style.overflow=''; cur=null; if(retFocus) retFocus.focus({preventScroll:true}); }
+  $('exitBtn').addEventListener('click',closeScene);
+  addEventListener('resize',fit);
+  try{ new ResizeObserver(fit).observe($('stage')); }catch(e){}
+
+  // ---------- 심문 ----------
+  let who=null;
+  function openTalk(p){
+    who=p; retFocus=document.activeElement;
+    $('tTitle').textContent=p.name; $('tSub').textContent=p.sub;
+    const im=img(p.id);
+    $('tPic').innerHTML = im ? '<img src="'+im+'" alt="'+p.name+' 초상" style="width:100%;border-radius:3px;border:1px solid var(--rule)">' : '<div class="portrait-ph">'+p.name.slice(0,1)+'</div>';
+    $('tSay').innerHTML = S.talked.includes(p.id) ? '<p class="aside">무엇을 물어볼까?</p>' : '<p>'+tm(p.line)+'</p>'+firstTalk(p);
+    $('tShow').hidden=true;
+    $('talkScene').hidden=false; document.body.style.overflow='hidden'; $('tExit').focus();
+  }
+  function firstTalk(p){
+    if(S.talked.includes(p.id)) return '';
+    S.talked.push(p.id); gain([p.talk]); save(); renderAll();
+    return '<p class="aside" style="color:var(--seal)">수첩에 진술을 적었다.</p>';
+  }
+  $('tAsk').addEventListener('click',()=>{ $('tSay').innerHTML='<p>'+tm(who.line)+'</p>'+firstTalk(who); });
+  $('tShowBtn').addEventListener('click',()=>{
+    const list=[...S.have.filter(i=>i.startsWith('i_')), ...S.have.filter(i=>!i.startsWith('i_')), ...S.deds];
+    $('tChips').innerHTML=list.length ? list.map(i=>'<button class="chip'+(i.startsWith('i_')?' it':'')+'" data-id="'+i+'">'+short(label(i))+'</button>').join('') : '<p class="empty">보여 줄 것이 아직 없습니다.</p>';
+    $('tShow').hidden=!$('tShow').hidden;
+  });
+  $('tChips').addEventListener('click',e=>{
+    const b=e.target.closest('[data-id]'); if(!b) return;
+    const id=b.dataset.id; let r=who.show[id], extra='';
+    if(r && typeof r==='object'){
+      if(r.flag && !S.flags[r.flag]){ S.flags[r.flag]=true; if(r.hint) extra+='<p class="aside" style="color:var(--seal)">'+r.hint+'</p>'; }
+      if(r.give && gain([r.give]).length) extra+='<p class="aside" style="color:var(--seal)">수첩에 진술을 적었다.</p>';
+      r=r.say; save(); renderAll();
+    }
+    $('tSay').innerHTML='<p class="aside">「'+short(label(id))+'」을(를) 보여 주었다.</p><p>'+tm(r||who.other)+'</p>'+extra;
+    $('tShow').hidden=true;
+  });
+  function closeTalk(){ $('talkScene').hidden=true; document.body.style.overflow=''; who=null; if(retFocus) retFocus.focus({preventScroll:true}); }
+  $('tExit').addEventListener('click',closeTalk);
+  document.addEventListener('keydown',e=>{ if(e.key!=='Escape') return; if(cur) closeScene(); else if(who) closeTalk(); else if(sel.length){ sel=[]; renderDesk(); } });
+
+  // ---------- 지목과 판결 ----------
+  function opts(el, list, key, empty){
+    el.innerHTML='';
+    if(!list.length){ el.innerHTML='<p class="empty">'+empty+'</p>'; return; }
+    for(const o of list){
+      const b=document.createElement('button'); b.type='button'; b.className='opt'; b.id=key+'-'+o.id;
+      b.innerHTML=(o.img?'<img src="'+o.img+'" alt="">':'')+o.name;
+      b.setAttribute('aria-pressed', String(S.q[key]===o.id));
+      b.addEventListener('click',()=>{ S.q[key]=o.id; save(); renderAccuse(); });
+      el.appendChild(b);
+    }
+  }
+  function renderAccuse(){
+    $('qs').innerHTML=C.Q.map(q=>'<div class="q"><h3>'+q.title+'</h3>'+(q.type==='ded'?'<p class="hint">추리 중에서 고르세요.</p>':q.type==='item'?'<p class="hint">소지품 중에서 고르세요.</p>':'')+'<div class="opts" id="'+q.key+'"></div></div>').join('');
+    for(const q of C.Q){
+      if(q.type==='who') opts($(q.key), PEOPLE.map(p=>({id:p.id, name:p.name+' ('+p.sub+')', img:img(p.id)})), q.key, '');
+      else if(q.type==='ded') opts($(q.key), S.deds.map(d=>({id:d, name:DEDS[d].name})), q.key, '아직 세운 추리가 없습니다.');
+      else opts($(q.key), S.have.filter(i=>i.startsWith('i_')).map(i=>({id:i, name:E[i].name})), q.key, '소지품이 없습니다.');
+    }
+    $('submitBtn').disabled=!C.Q.every(q=>S.q[q.key]);
+  }
+  function renderVerdict(){
+    const v=$('verdict');
+    if(!S.done){ v.hidden=true; return; }
+    const j=C.judge(S);
+    const li=(ok,t)=>'<li class="'+(ok?'o':'x')+'">'+(ok?'○':'×')+' '+t+'</li>';
+    v.innerHTML='<div class="seal" aria-hidden="true">'+j.seal+'</div><div class="head"><h2>'+j.title+'</h2><p>'+j.lead+'</p></div>'
+      +'<ul class="score">'+j.rows.map(r=>li(r[0],r[1])).join('')+'<li>세운 추리 '+S.deds.length+'개</li></ul>'
+      +'<h2 style="font-size:22px">사건의 전말</h2>'+C.truth.map(p=>'<p>'+tm(p)+'</p>').join('')
+      +'<div class="row"><button class="btn primary" id="restartBtn">처음부터 다시</button><button class="btn" id="toLobby">사건 목록으로</button></div>';
+    v.hidden=false;
+    $('restartBtn').addEventListener('click',()=>{ S=blank(); sel=[]; lookId=null; save(); $('accuse').hidden=true; renderAll(); scrollTo({top:0,behavior:'smooth'}); });
+    $('toLobby').addEventListener('click',()=>$('lobbyBtn').click());
+  }
+  $('accuseBtn').addEventListener('click',()=>{ $('accuse').hidden=false; renderAccuse(); $('accuse').scrollIntoView({behavior:'smooth'}); });
+  $('backBtn').addEventListener('click',()=>{ $('accuse').hidden=true; scrollTo({top:0,behavior:'smooth'}); });
+  $('submitBtn').addEventListener('click',()=>{ S.done=true; save(); $('accuse').hidden=true; renderAll(); $('verdict').scrollIntoView({behavior:'smooth'}); });
+
+  renderLobby();
+  window.__jd = {S:()=>S, C:()=>C, PAIR:()=>PAIR, CASES, open:id=>openCase(CASES.find(c=>c.id===id))};
+})();
+</script>
