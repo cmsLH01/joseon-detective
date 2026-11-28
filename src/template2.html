@@ -67,6 +67,12 @@
   h1{font-size:30px}
   .brief{margin:14px 0 20px; gap:16px}
 }
+.banner{aspect-ratio:3/1; background:#2b2a27 center 45%/cover no-repeat; border-radius:3px; margin:0 0 22px}
+.banner:not([style*="background-image"]){display:none}
+.endings{border:1px solid var(--rule); border-radius:3px; padding:16px 18px; background:var(--paper); margin:20px 0}
+.endings .row{flex-wrap:wrap}
+.endings .locked-note{font-size:14px; color:var(--faint); margin:8px 0 0}
+.ending-pic{aspect-ratio:3/2; background:center/cover no-repeat; border-radius:3px; margin:12px 0; max-width:640px}
 .lobby-note{max-width:64ch; margin:10px 0 0; font-size:15px; color:var(--faint)}
 .case.locked{cursor:default}
 .case.locked .pic{filter:grayscale(1) brightness(.8)}
@@ -89,6 +95,7 @@
 <div class="wrap">
   <!-- 사건 목록 -->
   <section id="lobby">
+    <div class="banner" id="banner" role="img" aria-label="눈 내리는 밤의 탐정 사무소"></div>
     <div class="office-head">
       <div>
         <p class="office">한양 북촌 골목 끝, 간판 없는 사무소</p>
@@ -300,8 +307,9 @@
 /*CASE3*/
   CASE3.accuseHead='강 훈장과 한 종사관 앞에서';
 
-  const CASES = [CASE1, CASE2, CASE3];
-  const NEXT = {id:'c4', no:'네 번째 사건', season:'겨울', title:'흑묵당의 장부', blurb:'첫눈 내린 밤, 붉은 매듭 노리개를 찬 노인이 사무소 문을 두드린다. "내 장부를 찾아 주시오."'};
+/*CASE4*/
+
+  const CASES = [CASE1, CASE2, CASE3, CASE4];
 
   // ---------- 공통 상태 ----------
   const $ = id => document.getElementById(id);
@@ -332,7 +340,7 @@
     CASES.forEach((c,i)=>{
       const st=readState(c), im=(window.IMG&&IMG[c.id]&&IMG[c.id][c.thumb])||null, open=isOpen(i), solved=isSolved(c);
       const b=document.createElement('button'); b.className='case'+(open?'':' locked'); b.type='button'; b.id='case-'+c.id;
-      const stamp = !open ? '' : solved ? '<span class="stamp">해결함</span>' : (st.done ? '<span class="stamp going">다시 수사</span>' : (st.visited.length||st.talked.length ? '<span class="stamp going">수사 중</span>' : ''));
+      const stamp = !open ? '' : (solved && c.endings && st.ending) ? '<span class="stamp">'+c.endings[st.ending].label+'</span>' : solved ? '<span class="stamp">해결함</span>' : (st.done ? '<span class="stamp going">다시 수사</span>' : (st.visited.length||st.talked.length ? '<span class="stamp going">수사 중</span>' : ''));
       b.innerHTML=(im?'<div class="pic" style="background-image:url('+im+')"></div>':'<div class="pic ph">그림 준비 중</div>')+stamp
         +(open?'':'<span class="lock">잠김<br>앞 사건을 풀면 열립니다</span>')
         +'<div class="body"><div class="no">'+c.season+' · '+c.no+'</div><h2>'+c.title+'</h2><p>'+c.blurb+'</p></div>';
@@ -340,19 +348,16 @@
       b.addEventListener('click',()=>{ if(open) openCase(c); else toast('아직 열리지 않은 사건','앞 사건 「'+CASES[i-1].title+'」부터 풀어야 합니다.', true); });
       $('cases').appendChild(b);
     });
-    const last=CASES[CASES.length-1], ready=isSolved(last);
-    const n=document.createElement('button'); n.className='case locked'; n.type='button'; n.id='case-'+NEXT.id; n.setAttribute('aria-disabled','true');
-    n.innerHTML='<div class="pic ph"></div><span class="lock">'+(ready?'준비 중<br>곧 이어집니다':'잠김<br>앞 사건을 풀면 열립니다')+'</span>'
-      +'<div class="body"><div class="no">'+NEXT.season+' · '+NEXT.no+'</div><h2>'+NEXT.title+'</h2><p>'+(ready?NEXT.blurb:'아직 장부에 적히지 않은 사건.')+'</p></div>';
-    n.addEventListener('click',()=>toast(ready?'준비 중':'아직 열리지 않은 사건', ready?'네 번째 사건은 지금 만들고 있어요.':'앞 사건 「'+last.title+'」부터 풀어야 합니다.', true));
-    $('cases').appendChild(n);
-    $('evbox').innerHTML=CASES.map(c=>{ const got=isSolved(c);
+    const ob=(window.IMG&&IMG.c4&&IMG.c4.office)||null;
+    if(ob) $('banner').style.backgroundImage='url('+ob+')';
+    $('evbox').innerHTML=CASES.filter(c=>c.evidence).map(c=>{ const got=isSolved(c);
       return '<div class="ev'+(got?' got':'')+'" id="ev-'+c.id+'"><div class="no">'+c.season+' · '+c.title+'</div>'+(got?'<b>'+c.evidence.name+'</b><p>'+c.evidence.text+'</p>':'<b>비어 있음</b><p>이 사건을 풀면 채워집니다.</p>')+'</div>'; }).join('');
   }
   function openCase(c){
     C=c; E=c.E; DEDS=c.DEDS; PLACES=c.PLACES; PEOPLE=c.PEOPLE;
     PAIR={}; for(const [d,v] of Object.entries(DEDS)) for(const p of v.pairs) PAIR[[...p].sort().join('+')]=d;
     S=readState(c);
+    if(c.start && !S.flags.started){ for(const i of c.start) if(!S.have.includes(i)) S.have.push(i); S.flags.started=true; }
     if(c.id==='c1' && S.found.includes('anbang:box') && !S.have.includes('i_box')) S.have.push('i_box');
     S.have=S.have.filter(i=>E[i]); S.deds=S.deds.filter(d=>DEDS[d]);
     sel=[]; lookId=null;
@@ -562,11 +567,27 @@
   function renderAccuse(){
     $('qs').innerHTML=C.Q.map(q=>'<div class="q"><h3>'+q.title+'</h3>'+(q.type==='ded'?'<p class="hint">추리 중에서 고르세요.</p>':q.type==='item'?'<p class="hint">소지품 중에서 고르세요.</p>':'')+'<div class="opts" id="'+q.key+'"></div></div>').join('');
     for(const q of C.Q){
-      if(q.type==='who') opts($(q.key), PEOPLE.map(p=>({id:p.id, name:p.name+' ('+p.sub+')', img:img(p.id)})), q.key, '');
+      if(q.type==='who') opts($(q.key), PEOPLE.filter(p=>!p.ally).map(p=>({id:p.id, name:p.name+' ('+p.sub+')', img:img(p.id)})), q.key, '');
       else if(q.type==='ded') opts($(q.key), S.deds.map(d=>({id:d, name:DEDS[d].name})), q.key, '아직 세운 추리가 없습니다.');
       else opts($(q.key), S.have.filter(i=>i.startsWith('i_')).map(i=>({id:i, name:E[i].name})), q.key, '소지품이 없습니다.');
     }
     $('submitBtn').disabled=!C.Q.every(q=>S.q[q.key]);
+  }
+  function endingHtml(){
+    const en=C.endings, ch=S.ending, ob=(window.IMG&&IMG.c4&&IMG.c4.office)||null;
+    let h='<div class="endings" id="endingBox"><h2 style="font-size:22px;margin-top:0">마지막 장</h2>';
+    if(!ch){
+      const can=!en.shadow.need || S.deds.includes(en.shadow.need);
+      h+='<p>'+en.prompt+'</p><div class="row"><button class="btn primary" id="end-light">'+en.light.btn+'</button>'
+        +'<button class="btn" id="end-shadow"'+(can?'':' disabled')+'>'+en.shadow.btn+'</button></div>'
+        +(can?'':'<p class="locked-note">'+en.shadow.locked+'</p>');
+    } else {
+      const e=en[ch];
+      h+='<h3 style="font-size:20px">'+e.title+'</h3>'+(ob?'<div class="ending-pic" style="background-image:url('+ob+')"></div>':'')
+        +e.text.map(p=>'<p>'+tm(p)+'</p>').join('')
+        +'<div class="row"><button class="btn small" id="reEnd">다른 길을 다시 고르기</button></div>';
+    }
+    return h+'</div>';
   }
   function renderVerdict(){
     const v=$('verdict');
@@ -577,12 +598,15 @@
     v.innerHTML='<div class="seal" aria-hidden="true">'+j.seal+'</div><div class="head"><h2>'+j.title+'</h2><p>'+j.lead+'</p></div>'
       +'<ul class="score">'+j.rows.map(r=>li(r[0],r[1])).join('')+'<li>세운 추리 '+S.deds.length+'개</li></ul>'
       +'<h2 style="font-size:22px">사건의 전말</h2>'+C.truth.map(p=>'<p>'+tm(p)+'</p>').join('')
-      +(ok ? '<h2 style="font-size:22px">그 뒤의 일</h2>'+(C.epilogue||[]).map(p=>'<p>'+tm(p)+'</p>').join('')
+      +(ok ? (C.epilogue?'<h2 style="font-size:22px">그 뒤의 일</h2>':'')+(C.epilogue||[]).map(p=>'<p>'+tm(p)+'</p>').join('')
              +(C.evidence?'<p class="gotev">증거함에 넣었다 · <b>'+C.evidence.name+'</b></p>':'')
            : '<p class="gotev">범인을 잘못 짚었습니다. 이 사건을 풀어야 다음 사건이 열립니다.</p>')
+      +(ok && C.endings ? endingHtml() : '')
       +'<div class="row">'+(ok && nx ? '<button class="btn primary" id="nextBtn">다음 사건: '+nx.title+'</button>' : '')
       +'<button class="btn'+(ok&&nx?'':' primary')+'" id="restartBtn">처음부터 다시</button><button class="btn" id="toLobby">사건 목록으로</button></div>';
     v.hidden=false;
+    for(const k of ['light','shadow']){ const b=$('end-'+k); if(b) b.addEventListener('click',()=>{ S.ending=k; save(); renderVerdict(); $('endingBox').scrollIntoView({behavior:'smooth'}); }); }
+    if($('reEnd')) $('reEnd').addEventListener('click',()=>{ delete S.ending; save(); renderVerdict(); $('endingBox').scrollIntoView({behavior:'smooth'}); });
     if($('nextBtn')) $('nextBtn').addEventListener('click',()=>{ $('toast').hidden=true; openCase(nx); });
     $('restartBtn').addEventListener('click',()=>{ S=blank(); sel=[]; lookId=null; save(); $('accuse').hidden=true; renderAll(); scrollTo({top:0,behavior:'smooth'}); });
     $('toLobby').addEventListener('click',()=>$('lobbyBtn').click());
