@@ -24,5 +24,13 @@ t = open(os.path.join(S,'template2.html'),encoding='utf-8').read()
 t = t.replace('/*CSS*/', css).replace('/*ICON*/', icon).replace('/*C1DATA*/', c1)
 t = t.replace('/*CASE2*/', open(os.path.join(S,'case2.js'),encoding='utf-8').read())
 t = t.replace('/*IMAGES*/', 'window.IMG = ' + json.dumps(imgs) + ';')
-open(os.path.join(ROOT,'index.html'),'w',encoding='utf-8').write(t)
+# GitHub Pages용: 아티팩트가 자동으로 넣어 주는 문서 뼈대와 모바일 설정을 직접 붙인다
+cut = t.index('<div class="wrap">')
+page = ('<!doctype html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n'
+        '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
+        + t[:cut] +
+        '<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}'
+        'body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>\n'
+        '</head>\n<body>\n' + t[cut:] + '\n</body>\n</html>\n')
+open(os.path.join(ROOT,'index.html'),'w',encoding='utf-8').write(page)
 print(len(t)//1024, 'KB', {k: len(v) for k, v in imgs.items()})

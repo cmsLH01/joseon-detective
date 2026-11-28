@@ -1,3 +1,8 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>조선 탐정 사무소</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -195,9 +200,53 @@ h2{font-size:23px; margin-bottom:10px}
 .frame.ph{border:1px dashed var(--rule)}
 .frame.ph .hs{box-shadow:inset 0 0 0 1px var(--rule); background:rgba(128,128,128,.05); color:var(--faint); font-size:13px; display:grid; place-items:center; text-align:center; padding:4px; line-height:1.3}
 .frame.ph::before{content:"그림 준비 중"; position:absolute; left:50%; top:8px; transform:translateX(-50%); font-family:var(--display); color:var(--faint); font-size:14px}
+.stage.zoom{display:block; overflow:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain}
+.stage.zoom .frame{margin:0 auto; max-width:none}
+.rules summary{cursor:pointer; list-style:none}
+.rules summary::-webkit-details-marker{display:none}
+.rules summary::after{content:" ▾"; color:var(--faint)}
+.rules details:not([open]) summary::after{content:" ▸"}
+.spotbar{display:none}
+.desktabs{display:none}
+.hs.flash{box-shadow:inset 0 0 0 3px var(--indigo)!important; background:rgba(45,72,120,.16)!important}
+@media (max-width:760px){
+  .desktabs{display:flex; position:sticky; top:env(safe-area-inset-top,0px); z-index:6; background:var(--paper); margin:0 0 10px; border:1px solid var(--ink); border-radius:4px; overflow:hidden}
+  .desktabs button{flex:1; padding:12px 8px; border:0; background:var(--sheet); font-family:var(--display); font-size:18px; cursor:pointer}
+  .desktabs button[aria-selected="true"]{background:var(--ink); color:var(--sheet)}
+  .desk[data-tab="0"] > .panel:nth-child(2), .desk[data-tab="1"] > .panel:nth-child(1){display:none}
+}
+@media (max-width:700px), (pointer:coarse){
+  .spotbar{display:flex; gap:6px; overflow-x:auto; -webkit-overflow-scrolling:touch; background:var(--sheet); border-top:1px solid var(--rule);
+    padding-block:8px; padding-left:max(12px,env(safe-area-inset-left,0px)); padding-right:max(12px,env(safe-area-inset-right,0px))}
+  .sp{flex:none; min-height:40px; padding:8px 14px; border:1px solid var(--rule); background:var(--paper); border-radius:20px; font-size:15px; cursor:pointer; white-space:nowrap}
+  .sp.got{color:var(--faint)}
+  .sp.got::before{content:"✓ "}
+  .chip{padding:10px 12px; font-size:15px}
+  .btn.small{padding:8px 12px}
+  .note{padding:11px 8px}
+  .opt{padding:10px 12px}
+  .item{padding:10px 4px 8px}
+  .talk .acts .btn{flex:1; min-height:46px}
+  .show .chips{max-height:40vh}
+  .cbtn{padding:10px 16px}
+}
+@media (max-width:620px){
+  .s-top{gap:8px; padding-block:8px}
+  .s-top h2{font-size:21px}
+  .s-say{min-height:118px; padding-block:10px 12px; font-size:15px; line-height:1.6}
+  .s-say b{font-size:17px}
+  .stage{padding:6px}
+  .take{font-size:14px}
+  .talk .say{font-size:16px}
+  h1{font-size:30px}
+  .brief{margin:14px 0 20px; gap:16px}
+}
 .portrait-ph{aspect-ratio:1; border:1px dashed var(--rule); border-radius:3px; display:grid; place-items:center; font-family:var(--display); font-size:44px; color:var(--faint); background:var(--paper)}
 </style>
 
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
 <div class="wrap">
   <!-- 사건 목록 -->
   <section id="lobby">
@@ -223,8 +272,8 @@ h2{font-size:23px; margin-bottom:10px}
 
     <section class="brief">
       <div class="story" id="story"></div>
-      <aside class="rules">
-        <h3>수사하는 법</h3>
+      <aside class="rules"><details id="rulesBox" open>
+        <summary><h3 style="display:inline">수사하는 법</h3></summary>
         <ol>
           <li>현장 그림에서 수상한 곳을 눌러 보세요. 보고 들은 것은 수첩에 적히고, 물건은 소지품에 넣을지 직접 고릅니다. 쓸모없는 물건도 섞여 있어요.</li>
           <li>사람에게 이야기를 듣고, 모은 것을 보여 주면 새 이야기가 나옵니다. 현장 속 사람에게 다시 말을 걸면 새 이야기가 나오기도 해요.</li>
@@ -233,7 +282,7 @@ h2{font-size:23px; margin-bottom:10px}
         </ol>
         <h3 style="margin-top:12px">옛 시각</h3>
         <p style="margin:0">술시는 저녁 7~9시, 해시는 밤 9~11시입니다.</p>
-      </aside>
+      </details></aside>
     </section>
 
     <div class="sec-head"><h2>현장</h2><small>눌러서 들어가 살펴보세요</small></div>
@@ -241,7 +290,11 @@ h2{font-size:23px; margin-bottom:10px}
     <div class="sec-head"><h2>심문</h2><small>모은 것을 보여 줄 수 있어요</small></div>
     <div class="people" id="people"></div>
 
-    <div class="desk">
+    <div class="desktabs" id="deskTabs" role="tablist">
+      <button type="button" role="tab" data-tab="0" aria-selected="true">수첩·추리</button>
+      <button type="button" role="tab" data-tab="1" aria-selected="false">소지품</button>
+    </div>
+    <div class="desk" id="desk" data-tab="0">
       <section class="panel">
         <h2>수첩 <small>눌러서 고르기</small></h2>
         <h3>단서와 진술</h3>
@@ -287,9 +340,11 @@ h2{font-size:23px; margin-bottom:10px}
   <div class="s-top">
     <h2 id="sTitle"></h2>
     <span class="count" id="sCount"></span>
-    <button class="btn" id="exitBtn">나가기</button>
+    <button class="btn small" id="zoomBtn" style="margin-left:auto">크게 보기</button>
+    <button class="btn" id="exitBtn" style="margin-left:0">나가기</button>
   </div>
   <div class="stage" id="stage"><div class="frame" id="frame"></div></div>
+  <div class="spotbar" id="spotbar" aria-label="살펴볼 곳"></div>
   <div class="s-say" aria-live="polite"><div id="say"></div></div>
 </div>
 
@@ -868,8 +923,15 @@ window.IMG = {"c1": {"anbang": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABA
     $('items').innerHTML=h;
     if(lookId && E[lookId] && S.have.includes(lookId)) $('look').innerHTML='<b>'+E[lookId].name+'</b>'+tm(E[lookId].text)+' <span class="empty">('+E[lookId].kind+'에서 찾음)</span> <button class="btn small" data-drop="'+lookId+'">소지품에서 빼기</button>';
     else $('look').innerHTML='<span class="empty">'+(items.length?'물건을 누르면 자세히 살펴봅니다.':'현장에서 챙긴 물건이 여기에 모입니다.')+'</span>';
+    const tb=$('deskTabs').children;
+    tb[0].textContent='수첩·추리 '+(notes.length+S.deds.length); tb[1].textContent='소지품 '+items.length;
     renderCombine();
   }
+  $('deskTabs').addEventListener('click',e=>{
+    const b=e.target.closest('[data-tab]'); if(!b) return;
+    $('desk').dataset.tab=b.dataset.tab;
+    for(const x of $('deskTabs').children) x.setAttribute('aria-selected', String(x===b));
+  });
   function renderCombine(){
     $('combine').hidden=!C || sel.length===0;
     $('pick').innerHTML=sel.length ? sel.map(i=>'<em>'+short(label(i))+'</em>').join('<i>＋</i>')+(sel.length<2?'<i>＋</i><span style="opacity:.6">하나 더 고르세요</span>':'') : '';
@@ -912,9 +974,34 @@ window.IMG = {"c1": {"anbang": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABA
     $('sTitle').textContent=p.name; $('sCount').textContent='';
     $('say').innerHTML='<p><b>'+p.name+'</b>'+tm(p.intro)+'</p>';
     $('scene').hidden=false; document.body.style.overflow='hidden';
-    fit(); $('exitBtn').focus();
+    renderSpotbar(); fit(); center(); $('exitBtn').focus();
+    if(isZoom() && $('stage').scrollWidth>$('stage').clientWidth+4) $('say').innerHTML+='<p class="old">그림을 좌우로 밀어서 둘러보세요.</p>';
   }
-  function fit(){ if(!cur) return; const st=$('stage'); $('frame').style.width=Math.max(200,Math.min(st.clientWidth-16,(st.clientHeight-16)*1.5))+'px'; }
+  // 휴대폰 세로 화면에서는 그림을 화면 높이에 맞춰 크게 보여 주고 좌우로 밀어 보게 한다
+  let zoom=null;
+  const autoZoom = ()=> innerWidth<700 && innerHeight>innerWidth;
+  const isZoom = ()=> zoom===null ? autoZoom() : zoom;
+  function fit(){
+    if(!cur) return;
+    const st=$('stage'), z=isZoom();
+    st.classList.toggle('zoom', z);
+    const w = z ? (st.clientHeight-16)*1.5 : Math.min(st.clientWidth-16,(st.clientHeight-16)*1.5);
+    $('frame').style.width=Math.max(200,w)+'px';
+    $('zoomBtn').textContent = z ? '전체 보기' : '크게 보기';
+  }
+  function renderSpotbar(){
+    if(!cur) return;
+    $('spotbar').innerHTML = cur.spots.map(s=>'<button type="button" class="sp'+(S.looked.includes(cur.id+':'+s.id)?' got':'')+'" data-spot="'+s.id+'">'+s.label+'</button>').join('');
+  }
+  $('spotbar').addEventListener('click',e=>{
+    const c=e.target.closest('[data-spot]'); if(!c) return;
+    const hs=$('frame').querySelector('.hs[data-spot="'+c.dataset.spot+'"]'), st=$('stage'), f=$('frame');
+    st.scrollLeft = Math.max(0, f.offsetLeft + hs.offsetLeft + hs.offsetWidth/2 - st.clientWidth/2);
+    hs.classList.add('flash'); setTimeout(()=>hs.classList.remove('flash'), 1200);
+    inspect(hs);
+  });
+  function center(){ const st=$('stage'); st.scrollLeft=Math.max(0,(st.scrollWidth-st.clientWidth)/2); }
+  $('zoomBtn').addEventListener('click',()=>{ zoom=!isZoom(); fit(); center(); });
   $('frame').addEventListener('click',e=>{ const b=e.target.closest('.hs'); if(b) inspect(b); });
   function inspect(b){
     const s=cur.spots.find(x=>x.id===b.dataset.spot), key=cur.id+':'+s.id;
@@ -922,6 +1009,7 @@ window.IMG = {"c1": {"anbang": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABA
     curSpot=s;
     if(isClue(s) && !S.found.includes(key)) S.found.push(key);
     if(!S.looked.includes(key)){ S.looked.push(key); b.classList.add('got'); }
+    renderSpotbar();
     if(s.sets) S.flags[s.sets]=true;
     const late = s.after && S.flags[s.after.flag];
     let give=[...(s.give||[])]; if(late) give.push(...s.after.give);
@@ -1021,7 +1109,11 @@ window.IMG = {"c1": {"anbang": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABA
   $('backBtn').addEventListener('click',()=>{ $('accuse').hidden=true; scrollTo({top:0,behavior:'smooth'}); });
   $('submitBtn').addEventListener('click',()=>{ S.done=true; save(); $('accuse').hidden=true; renderAll(); $('verdict').scrollIntoView({behavior:'smooth'}); });
 
+  try{ if(innerWidth<700) $('rulesBox').open=false; }catch(e){}
   renderLobby();
   window.__jd = {S:()=>S, C:()=>C, PAIR:()=>PAIR, CASES, open:id=>openCase(CASES.find(c=>c.id===id))};
 })();
 </script>
+
+</body>
+</html>
