@@ -28,7 +28,7 @@
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-body{background:var(--paper); color:var(--ink); font-family:var(--body); font-size:16px; line-height:1.7;
+body{background:var(--paper); color:var(--ink); font-family:var(--body); font-size:18px; line-height:1.7;
   padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px))}
 .wrap{max-width:1040px; margin:0 auto; padding-block:28px 120px}
 button{font:inherit; color:inherit}
@@ -36,22 +36,22 @@ button:focus-visible{outline:2px solid var(--indigo); outline-offset:2px}
 h1,h2,h3{font-family:var(--display); font-weight:400; margin:0}
 
 header{display:flex; gap:20px; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; border-bottom:2px solid var(--ink); padding-bottom:14px}
-.office{font-family:var(--display); font-size:15px; color:var(--faint); margin:0}
+.office{font-family:var(--display); font-size:17px; color:var(--faint); margin:0}
 h1{font-size:clamp(30px,6vw,46px); line-height:1.15; margin-top:2px}
-.progress{display:flex; gap:18px; color:var(--faint); font-size:14px; font-variant-numeric:tabular-nums}
-.progress b{font-family:var(--display); font-weight:400; font-size:24px; color:var(--ink); margin-right:3px}
+.progress{display:flex; gap:18px; color:var(--faint); font-size:16px; font-variant-numeric:tabular-nums}
+.progress b{font-family:var(--display); font-weight:400; font-size:27px; color:var(--ink); margin-right:3px}
 
 .brief{display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); gap:28px; margin:20px 0 28px}
 @media (max-width:760px){.brief{grid-template-columns:1fr}}
 .brief .story p{margin:0 0 10px; max-width:64ch}
-.brief .story p:first-child{font-size:17px}
-.rules{background:var(--sheet); border-left:3px solid var(--indigo); padding:14px 18px; font-size:15px}
-.rules h3{font-size:18px; margin-bottom:6px}
+.brief .story p:first-child{font-size:19px}
+.rules{background:var(--sheet); border-left:3px solid var(--indigo); padding:14px 18px; font-size:17px}
+.rules h3{font-size:20px; margin-bottom:6px}
 .rules ol{margin:0; padding-left:20px} .rules li{margin:3px 0}
 
-h2{font-size:23px; margin-bottom:10px}
+h2{font-size:26px; margin-bottom:10px}
 .sec-head{display:flex; align-items:baseline; justify-content:space-between; gap:12px}
-.sec-head small{color:var(--faint); font-size:14px}
+.sec-head small{color:var(--faint); font-size:16px}
 .rooms{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-bottom:26px}
 .people{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-bottom:30px}
 @media (max-width:620px){.rooms{grid-template-columns:repeat(2,minmax(0,1fr))} .people{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -60,35 +60,35 @@ h2{font-size:23px; margin-bottom:10px}
 .card .pic{aspect-ratio:3/2; background-size:cover; background-position:center; width:100%}
 .people .card .pic{aspect-ratio:1}
 .card .cap{padding:8px 12px 10px; display:flex; justify-content:space-between; align-items:baseline; gap:8px}
-.card .cap span{font-family:var(--display); font-size:19px}
-.card .cap small{color:var(--faint); font-size:13px; font-variant-numeric:tabular-nums; white-space:nowrap}
+.card .cap span{font-family:var(--display); font-size:21px}
+.card .cap small{color:var(--faint); font-size:15px; font-variant-numeric:tabular-nums; white-space:nowrap}
 .card .cap small.all{color:var(--ok)}
 
 .desk{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:20px; align-items:start}
 @media (max-width:760px){.desk{grid-template-columns:1fr}}
 .panel{background:var(--sheet); border:1px solid var(--rule); padding:18px 18px 16px}
 .panel h2{display:flex; justify-content:space-between; align-items:baseline}
-.panel h2 small{font-family:var(--body); font-size:13px; color:var(--faint)}
-.panel .hint{color:var(--faint); font-size:14px; margin:-4px 0 10px}
-.panel h3{font-size:17px; margin:14px 0 4px; color:var(--faint)}
+.panel h2 small{font-family:var(--body); font-size:15px; color:var(--faint)}
+.panel .hint{color:var(--faint); font-size:16px; margin:-4px 0 10px}
+.panel h3{font-size:19px; margin:14px 0 4px; color:var(--faint)}
 .notes{list-style:none; margin:0; padding:0}
-.note{display:block; width:100%; text-align:left; background:transparent; border:0; border-top:1px dashed var(--rule); padding:8px 6px 8px 8px; font-size:15px; line-height:1.55; cursor:pointer; border-left:3px solid transparent}
+.note{display:block; width:100%; text-align:left; background:transparent; border:0; border-top:1px dashed var(--rule); padding:8px 6px 8px 8px; font-size:17px; line-height:1.55; cursor:pointer; border-left:3px solid transparent}
 .notes li:first-child .note{border-top:0}
-.note .kind{font-size:12px; color:var(--faint); display:block}
+.note .kind{font-size:13px; color:var(--faint); display:block}
 .note:hover{background:var(--paper)}
 .note.sel{background:var(--indigo-soft); border-left-color:var(--indigo)}
 .note.ded{color:var(--ink)}
 .note.ded .kind{color:var(--seal)}
-.empty{color:var(--faint); font-size:15px; margin:0}
+.empty{color:var(--faint); font-size:17px; margin:0}
 
 .items{display:grid; grid-template-columns:repeat(auto-fill,minmax(88px,1fr)); gap:8px}
-.item{background:var(--paper); border:1px solid var(--rule); border-radius:3px; padding:8px 4px 6px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:4px; font-size:13px; line-height:1.3; text-align:center}
+.item{background:var(--paper); border:1px solid var(--rule); border-radius:3px; padding:8px 4px 6px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:4px; font-size:15px; line-height:1.3; text-align:center}
 .item svg{width:44px; height:44px}
 .item:hover{border-color:var(--indigo)}
 .item.sel{background:var(--indigo-soft); border-color:var(--indigo)}
 .slot{border:1px dashed var(--rule); border-radius:3px; aspect-ratio:1/0.9}
-.look{margin-top:12px; font-size:15px; min-height:3em; border-top:1px solid var(--rule); padding-top:10px}
-.look b{font-family:var(--display); font-weight:400; font-size:17px; margin-right:6px}
+.look{margin-top:12px; font-size:17px; min-height:3em; border-top:1px solid var(--rule); padding-top:10px}
+.look b{font-family:var(--display); font-weight:400; font-size:19px; margin-right:6px}
 
 .ic{fill:none; stroke:var(--ink); stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
 .ic .w{fill:var(--wax)} .ic .k{fill:var(--ink); stroke:none} .ic .j{fill:var(--jade)} .ic .r{fill:var(--seal); stroke:none}
@@ -98,39 +98,39 @@ h2{font-size:23px; margin-bottom:10px}
   padding-block:12px calc(12px + env(safe-area-inset-bottom,0px));
   padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px))}
 .combine > div{max-width:1040px; margin:0 auto; display:flex; gap:12px; align-items:center; flex-wrap:wrap}
-.combine .pick{flex:1; min-width:200px; font-size:15px}
-.combine .pick em{font-style:normal; font-family:var(--display); font-size:17px}
+.combine .pick{flex:1; min-width:200px; font-size:17px}
+.combine .pick em{font-style:normal; font-family:var(--display); font-size:19px}
 .combine .pick i{font-style:normal; opacity:.6; margin:0 8px}
 .cbtn{border:1px solid var(--sheet); background:transparent; color:var(--sheet); border-radius:3px; padding:7px 14px; cursor:pointer}
 .cbtn.primary{background:var(--sheet); color:var(--ink)}
 .cbtn:disabled{opacity:.4; cursor:not-allowed}
 
 .toast{position:fixed; left:50%; top:calc(env(safe-area-inset-top,0px) + 16px); transform:translateX(-50%); z-index:40; max-width:min(560px,calc(100vw - 32px));
-  background:var(--sheet); color:var(--ink); border:1px solid var(--rule); border-left:4px solid var(--seal); padding:10px 16px; font-size:15px; box-shadow:0 6px 24px rgba(0,0,0,.18)}
+  background:var(--sheet); color:var(--ink); border:1px solid var(--rule); border-left:4px solid var(--seal); padding:10px 16px; font-size:17px; box-shadow:0 6px 24px rgba(0,0,0,.18)}
 .toast b{font-family:var(--display); font-weight:400; color:var(--seal); margin-right:6px}
 .toast.plain{border-left-color:var(--faint)} .toast.plain b{color:var(--faint)}
 
 .accuse-row{margin-top:26px; display:flex; justify-content:flex-end}
 .btn{padding:9px 16px; border-radius:3px; cursor:pointer; border:1px solid var(--ink); background:transparent}
 .btn.primary{background:var(--ink); color:var(--sheet)}
-.btn.big{font-family:var(--display); font-size:19px; padding:10px 22px}
+.btn.big{font-family:var(--display); font-size:21px; padding:10px 22px}
 .btn:disabled{opacity:.4; cursor:not-allowed}
 .accuse{margin-top:30px; border-top:2px solid var(--ink); padding-top:20px}
 .q{margin-bottom:22px}
-.q h3{font-size:20px; margin-bottom:8px}
-.q .hint{color:var(--faint); font-size:14px; margin:-4px 0 8px}
+.q h3{font-size:22px; margin-bottom:8px}
+.q .hint{color:var(--faint); font-size:16px; margin:-4px 0 8px}
 .opts{display:flex; flex-wrap:wrap; gap:8px}
-.opt{font-size:15px; background:var(--sheet); border:1px solid var(--rule); border-radius:3px; padding:8px 12px; cursor:pointer; text-align:left; max-width:100%; display:inline-flex; align-items:center; gap:8px}
+.opt{font-size:17px; background:var(--sheet); border:1px solid var(--rule); border-radius:3px; padding:8px 12px; cursor:pointer; text-align:left; max-width:100%; display:inline-flex; align-items:center; gap:8px}
 .opt img{width:32px; height:32px; border-radius:2px}
 .opt[aria-pressed="true"]{background:var(--indigo); border-color:var(--indigo); color:var(--sheet)}
 .row{display:flex; gap:10px; flex-wrap:wrap}
 
 .verdict{margin-top:30px; background:var(--sheet); border:1px solid var(--rule); padding:26px 24px; position:relative; overflow:hidden}
-.verdict h2{font-size:30px; margin-bottom:4px}
+.verdict h2{font-size:34px; margin-bottom:4px}
 .verdict p{max-width:66ch}
 .verdict .head{padding-right:100px}
 .seal{position:absolute; top:18px; right:18px; width:84px; height:84px; border:3px solid var(--seal); color:var(--seal); font-family:var(--display);
-  display:grid; place-items:center; font-size:26px; line-height:1.05; text-align:center; transform:rotate(-8deg); border-radius:4px}
+  display:grid; place-items:center; font-size:29px; line-height:1.05; text-align:center; transform:rotate(-8deg); border-radius:4px}
 @media (prefers-reduced-motion:no-preference){ .seal{animation:stamp .45s cubic-bezier(.2,1.6,.4,1)} }
 @keyframes stamp{from{transform:rotate(-8deg) scale(1.8); opacity:0} to{transform:rotate(-8deg) scale(1); opacity:1}}
 .score{list-style:none; padding:0; margin:14px 0}
@@ -142,8 +142,8 @@ h2{font-size:23px; margin-bottom:10px}
   padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px)}
 .s-top{display:flex; align-items:center; gap:14px; padding-block:10px; border-bottom:1px solid var(--rule);
   padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px))}
-.s-top h2{margin:0; font-size:26px; line-height:1.2}
-.s-top .count{color:var(--faint); font-size:14px; font-variant-numeric:tabular-nums}
+.s-top h2{margin:0; font-size:29px; line-height:1.2}
+.s-top .count{color:var(--faint); font-size:16px; font-variant-numeric:tabular-nums}
 .s-top .btn{margin-left:auto}
 .stage{position:relative; flex:1; min-height:0; display:grid; place-items:center; padding:8px}
 .frame{position:relative; aspect-ratio:3/2; max-width:100%; background-size:100% 100%; border-radius:2px; box-shadow:0 2px 14px rgba(0,0,0,.15)}
@@ -154,27 +154,27 @@ h2{font-size:23px; margin-bottom:10px}
 .s-say{background:var(--sheet); border-top:1px solid var(--rule); padding-block:14px 16px; min-height:150px;
   padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px))}
 .s-say > div{max-width:820px; margin:0 auto}
-.s-say b{font-family:var(--display); font-weight:400; font-size:19px; margin-right:6px}
+.s-say b{font-family:var(--display); font-weight:400; font-size:21px; margin-right:6px}
 .s-say p{margin:0}
-.s-say .new{color:var(--seal); font-size:14px; margin-top:4px}
-.s-say .old{color:var(--faint); font-size:14px; margin-top:4px}
+.s-say .new{color:var(--seal); font-size:16px; margin-top:4px}
+.s-say .old{color:var(--faint); font-size:16px; margin-top:4px}
 .takes{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
 .takes:empty{display:none}
-.take{display:flex; align-items:center; gap:8px; background:var(--paper); border:1px solid var(--rule); border-radius:3px; padding:4px 6px 4px 4px; font-size:15px}
+.take{display:flex; align-items:center; gap:8px; background:var(--paper); border:1px solid var(--rule); border-radius:3px; padding:4px 6px 4px 4px; font-size:17px}
 .take svg{width:32px; height:32px}
-.btn.small{padding:4px 10px; font-size:14px}
+.btn.small{padding:4px 10px; font-size:16px}
 
 .talk{display:grid; grid-template-columns:minmax(0,300px) minmax(0,1fr); gap:24px; align-items:start; width:100%; max-width:880px; padding:12px 0}
 @media (max-width:620px){.talk{grid-template-columns:120px minmax(0,1fr); gap:14px}}
 .talk img{width:100%; border-radius:3px; border:1px solid var(--rule)}
-.talk .say{font-size:17px; min-height:5em}
+.talk .say{font-size:19px; min-height:5em}
 .talk .say p{margin:0 0 10px}
-.talk .say .aside{color:var(--faint); font-size:15px}
+.talk .say .aside{color:var(--faint); font-size:17px}
 .talk .acts{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
 .show{margin-top:14px; border-top:1px solid var(--rule); padding-top:12px}
-.show h3{font-size:17px; margin-bottom:8px}
+.show h3{font-size:19px; margin-bottom:8px}
 .show .chips{display:flex; flex-wrap:wrap; gap:6px; max-height:34vh; overflow:auto}
-.chip{font-size:14px; border:1px solid var(--rule); background:var(--sheet); border-radius:3px; padding:5px 10px; cursor:pointer; text-align:left}
+.chip{font-size:16px; border:1px solid var(--rule); background:var(--sheet); border-radius:3px; padding:5px 10px; cursor:pointer; text-align:left}
 .chip:hover{border-color:var(--indigo)}
 .chip.it{border-color:var(--jade)}
 .stage.talkstage{place-items:start center; overflow:auto}
@@ -187,19 +187,19 @@ h2{font-size:23px; margin-bottom:10px}
 .case:hover{border-color:var(--indigo)}
 .case .pic{aspect-ratio:3/2; background-size:cover; background-position:center}
 .case .body{padding:14px 16px 16px}
-.case .no{font-family:var(--display); color:var(--faint); font-size:14px}
-.case h2{font-size:26px; margin:2px 0 6px}
-.case p{margin:0; font-size:15px; color:var(--faint)}
-.case .stamp{position:absolute; top:12px; right:12px; border:2px solid var(--seal); color:var(--seal); font-family:var(--display); padding:2px 8px; transform:rotate(-6deg); background:var(--sheet); font-size:15px}
+.case .no{font-family:var(--display); color:var(--faint); font-size:16px}
+.case h2{font-size:29px; margin:2px 0 6px}
+.case p{margin:0; font-size:17px; color:var(--faint)}
+.case .stamp{position:absolute; top:12px; right:12px; border:2px solid var(--seal); color:var(--seal); font-family:var(--display); padding:2px 8px; transform:rotate(-6deg); background:var(--sheet); font-size:17px}
 .case .stamp.going{border-color:var(--indigo); color:var(--indigo)}
-.lead-intro{max-width:64ch; margin:18px 0 0; font-size:17px}
+.lead-intro{max-width:64ch; margin:18px 0 0; font-size:19px}
 .back{margin-left:auto}
 /* 그림이 아직 없을 때 */
 .pic.ph, .frame.ph{background-color:var(--paper); background-image:repeating-linear-gradient(45deg, transparent 0 14px, rgba(128,128,128,.07) 14px 15px)}
-.pic.ph{display:grid; place-items:center; color:var(--faint); font-family:var(--display); font-size:15px}
+.pic.ph{display:grid; place-items:center; color:var(--faint); font-family:var(--display); font-size:17px}
 .frame.ph{border:1px dashed var(--rule)}
-.frame.ph .hs{box-shadow:inset 0 0 0 1px var(--rule); background:rgba(128,128,128,.05); color:var(--faint); font-size:13px; display:grid; place-items:center; text-align:center; padding:4px; line-height:1.3}
-.frame.ph::before{content:"그림 준비 중"; position:absolute; left:50%; top:8px; transform:translateX(-50%); font-family:var(--display); color:var(--faint); font-size:14px}
+.frame.ph .hs{box-shadow:inset 0 0 0 1px var(--rule); background:rgba(128,128,128,.05); color:var(--faint); font-size:15px; display:grid; place-items:center; text-align:center; padding:4px; line-height:1.3}
+.frame.ph::before{content:"그림 준비 중"; position:absolute; left:50%; top:8px; transform:translateX(-50%); font-family:var(--display); color:var(--faint); font-size:16px}
 .stage.zoom{display:block; overflow:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain}
 .stage.zoom .frame{margin:0 auto; max-width:none}
 .rules summary{cursor:pointer; list-style:none}
@@ -211,17 +211,17 @@ h2{font-size:23px; margin-bottom:10px}
 .hs.flash{box-shadow:inset 0 0 0 3px var(--indigo)!important; background:rgba(45,72,120,.16)!important}
 @media (max-width:760px){
   .desktabs{display:flex; position:sticky; top:env(safe-area-inset-top,0px); z-index:6; background:var(--paper); margin:0 0 10px; border:1px solid var(--ink); border-radius:4px; overflow:hidden}
-  .desktabs button{flex:1; padding:12px 8px; border:0; background:var(--sheet); font-family:var(--display); font-size:18px; cursor:pointer}
+  .desktabs button{flex:1; padding:12px 8px; border:0; background:var(--sheet); font-family:var(--display); font-size:20px; cursor:pointer}
   .desktabs button[aria-selected="true"]{background:var(--ink); color:var(--sheet)}
   .desk[data-tab="0"] > .panel:nth-child(2), .desk[data-tab="1"] > .panel:nth-child(1){display:none}
 }
 @media (max-width:700px), (pointer:coarse){
   .spotbar{display:flex; gap:6px; overflow-x:auto; -webkit-overflow-scrolling:touch; background:var(--sheet); border-top:1px solid var(--rule);
     padding-block:8px; padding-left:max(12px,env(safe-area-inset-left,0px)); padding-right:max(12px,env(safe-area-inset-right,0px))}
-  .sp{flex:none; min-height:40px; padding:8px 14px; border:1px solid var(--rule); background:var(--paper); border-radius:20px; font-size:15px; cursor:pointer; white-space:nowrap}
+  .sp{flex:none; min-height:40px; padding:8px 14px; border:1px solid var(--rule); background:var(--paper); border-radius:20px; font-size:17px; cursor:pointer; white-space:nowrap}
   .sp.got{color:var(--faint)}
   .sp.got::before{content:"✓ "}
-  .chip{padding:10px 12px; font-size:15px}
+  .chip{padding:10px 12px; font-size:17px}
   .btn.small{padding:8px 12px}
   .note{padding:11px 8px}
   .opt{padding:10px 12px}
@@ -232,38 +232,38 @@ h2{font-size:23px; margin-bottom:10px}
 }
 @media (max-width:620px){
   .s-top{gap:8px; padding-block:8px}
-  .s-top h2{font-size:21px}
-  .s-say{min-height:118px; padding-block:10px 12px; font-size:15px; line-height:1.6}
-  .s-say b{font-size:17px}
+  .s-top h2{font-size:24px}
+  .s-say{min-height:118px; padding-block:10px 12px; font-size:17px; line-height:1.6}
+  .s-say b{font-size:19px}
   .stage{padding:6px}
-  .take{font-size:14px}
-  .talk .say{font-size:16px}
-  h1{font-size:30px}
+  .take{font-size:16px}
+  .talk .say{font-size:18px}
+  h1{font-size:34px}
   .brief{margin:14px 0 20px; gap:16px}
 }
 .banner{aspect-ratio:3/1; background:#2b2a27 center 45%/cover no-repeat; border-radius:3px; margin:0 0 22px}
 .banner:not([style*="background-image"]){display:none}
 .endings{border:1px solid var(--rule); border-radius:3px; padding:16px 18px; background:var(--paper); margin:20px 0}
 .endings .row{flex-wrap:wrap}
-.endings .locked-note{font-size:14px; color:var(--faint); margin:8px 0 0}
+.endings .locked-note{font-size:16px; color:var(--faint); margin:8px 0 0}
 .ending-pic{aspect-ratio:3/2; background:center/cover no-repeat; border-radius:3px; margin:12px 0; max-width:640px}
-.lobby-note{max-width:64ch; margin:10px 0 0; font-size:15px; color:var(--faint)}
+.lobby-note{max-width:64ch; margin:10px 0 0; font-size:17px; color:var(--faint)}
 .case.locked{cursor:default}
 .case.locked .pic{filter:grayscale(1) brightness(.8)}
 .case.locked h2,.case.locked p{opacity:.7}
 #lobby .sec-head{margin-top:34px}
-.case .lock{background:rgba(20,18,14,.38);position:absolute; left:0; right:0; top:0; aspect-ratio:3/2; display:grid; place-items:center; text-align:center; padding:0 16px; font-family:var(--display); font-size:20px; color:#fff; text-shadow:0 1px 6px rgba(0,0,0,.9)}
-.case .pic.ph{display:grid; place-items:center; background:#3b3a36; color:#e9e2d0; font-family:var(--display); font-size:18px}
+.case .lock{background:rgba(20,18,14,.38);position:absolute; left:0; right:0; top:0; aspect-ratio:3/2; display:grid; place-items:center; text-align:center; padding:0 16px; font-family:var(--display); font-size:22px; color:#fff; text-shadow:0 1px 6px rgba(0,0,0,.9)}
+.case .pic.ph{display:grid; place-items:center; background:#3b3a36; color:#e9e2d0; font-family:var(--display); font-size:20px}
 .evbox{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin-top:16px}
 @media (max-width:700px){.evbox{grid-template-columns:1fr}}
 .ev{border:1px dashed var(--rule); border-radius:3px; padding:14px 16px; background:var(--paper); min-height:92px; min-width:0}
 .ev.got{border:1px solid var(--seal); background:var(--sheet)}
-.ev .no{font-family:var(--display); color:var(--faint); font-size:14px}
-.ev b{display:block; font-family:var(--display); font-size:19px; margin:2px 0 4px; color:var(--seal); font-weight:400}
-.ev p{margin:0; font-size:14px; color:var(--faint)}
+.ev .no{font-family:var(--display); color:var(--faint); font-size:16px}
+.ev b{display:block; font-family:var(--display); font-size:21px; margin:2px 0 4px; color:var(--seal); font-weight:400}
+.ev p{margin:0; font-size:16px; color:var(--faint)}
 .ev:not(.got) b{color:var(--faint)}
 .gotev{border:2px solid var(--seal); padding:10px 14px; border-radius:3px; color:var(--seal); margin:16px 0}
-.portrait-ph{aspect-ratio:1; border:1px dashed var(--rule); border-radius:3px; display:grid; place-items:center; font-family:var(--display); font-size:44px; color:var(--faint); background:var(--paper)}
+.portrait-ph{aspect-ratio:1; border:1px dashed var(--rule); border-radius:3px; display:grid; place-items:center; font-family:var(--display); font-size:49px; color:var(--faint); background:var(--paper)}
 </style>
 
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -1624,7 +1624,7 @@ window.IMG = {"c1": {"anbang": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABA
   }
   function endingHtml(){
     const en=C.endings, ch=S.ending, ob=(window.IMG&&IMG.c4&&IMG.c4.office)||null;
-    let h='<div class="endings" id="endingBox"><h2 style="font-size:22px;margin-top:0">마지막 장</h2>';
+    let h='<div class="endings" id="endingBox"><h2 style="font-size:25px;margin-top:0">마지막 장</h2>';
     if(!ch){
       const can=!en.shadow.need || S.deds.includes(en.shadow.need);
       h+='<p>'+en.prompt+'</p><div class="row"><button class="btn primary" id="end-light">'+en.light.btn+'</button>'
@@ -1632,7 +1632,7 @@ window.IMG = {"c1": {"anbang": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABA
         +(can?'':'<p class="locked-note">'+en.shadow.locked+'</p>');
     } else {
       const e=en[ch];
-      h+='<h3 style="font-size:20px">'+e.title+'</h3>'+(ob?'<div class="ending-pic" style="background-image:url('+ob+')"></div>':'')
+      h+='<h3 style="font-size:22px">'+e.title+'</h3>'+(ob?'<div class="ending-pic" style="background-image:url('+ob+')"></div>':'')
         +e.text.map(p=>'<p>'+tm(p)+'</p>').join('')
         +'<div class="row"><button class="btn small" id="reEnd">다른 길을 다시 고르기</button></div>';
     }
@@ -1646,8 +1646,8 @@ window.IMG = {"c1": {"anbang": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABA
     const li=(ok,t)=>'<li class="'+(ok?'o':'x')+'">'+(ok?'○':'×')+' '+t+'</li>';
     v.innerHTML='<div class="seal" aria-hidden="true">'+j.seal+'</div><div class="head"><h2>'+j.title+'</h2><p>'+j.lead+'</p></div>'
       +'<ul class="score">'+j.rows.map(r=>li(r[0],r[1])).join('')+'<li>세운 추리 '+S.deds.length+'개</li></ul>'
-      +'<h2 style="font-size:22px">사건의 전말</h2>'+C.truth.map(p=>'<p>'+tm(p)+'</p>').join('')
-      +(ok ? (C.epilogue?'<h2 style="font-size:22px">그 뒤의 일</h2>':'')+(C.epilogue||[]).map(p=>'<p>'+tm(p)+'</p>').join('')
+      +'<h2 style="font-size:25px">사건의 전말</h2>'+C.truth.map(p=>'<p>'+tm(p)+'</p>').join('')
+      +(ok ? (C.epilogue?'<h2 style="font-size:25px">그 뒤의 일</h2>':'')+(C.epilogue||[]).map(p=>'<p>'+tm(p)+'</p>').join('')
              +(C.evidence?'<p class="gotev">증거함에 넣었다 · <b>'+C.evidence.name+'</b></p>':'')
            : '<p class="gotev">범인을 잘못 짚었습니다. 이 사건을 풀어야 다음 사건이 열립니다.</p>')
       +(ok && C.endings ? endingHtml() : '')

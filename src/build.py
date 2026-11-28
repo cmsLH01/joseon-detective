@@ -27,6 +27,9 @@ t = t.replace('/*CSS*/', css).replace('/*ICON*/', icon).replace('/*C1DATA*/', c1
 t = t.replace('/*CASE2*/', open(os.path.join(S,'case2.js'),encoding='utf-8').read())
 t = t.replace('/*CASE3*/', open(os.path.join(S,'case3.js'),encoding='utf-8').read())
 t = t.replace('/*CASE4*/', open(os.path.join(S,'case4.js'),encoding='utf-8').read())
+# 글자 크기: 모든 font-size를 약 12% 키운다
+import re
+t = re.sub(r'font-size:\s*(\d+(?:\.\d+)?)px', lambda m: 'font-size:%dpx' % round(float(m.group(1))*1.12), t)
 t = t.replace('/*IMAGES*/', 'window.IMG = ' + json.dumps(imgs) + ';')
 # GitHub Pages용: 아티팩트가 자동으로 넣어 주는 문서 뼈대와 모바일 설정을 직접 붙인다
 cut = t.index('<div class="wrap">')
