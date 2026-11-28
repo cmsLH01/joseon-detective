@@ -19,10 +19,12 @@ def load(folder, keys):
 imgs = {
   'c1': load('case1', ['anbang','sarang','yard','kitchen','gate','haeng','kim','dolsoe','kkeut','park']),
   'c2': load('case2', ['yakbang','brew','room','store','yunroom','garden','hdo','yun','bok','choi']),
+  'c3': load('case3', ['hunroom','hall','library','dorm','backwall','shop','lee','pak','jung','manbok']),
 }
 t = open(os.path.join(S,'template2.html'),encoding='utf-8').read()
 t = t.replace('/*CSS*/', css).replace('/*ICON*/', icon).replace('/*C1DATA*/', c1)
 t = t.replace('/*CASE2*/', open(os.path.join(S,'case2.js'),encoding='utf-8').read())
+t = t.replace('/*CASE3*/', open(os.path.join(S,'case3.js'),encoding='utf-8').read())
 t = t.replace('/*IMAGES*/', 'window.IMG = ' + json.dumps(imgs) + ';')
 # GitHub Pages용: 아티팩트가 자동으로 넣어 주는 문서 뼈대와 모바일 설정을 직접 붙인다
 cut = t.index('<div class="wrap">')

@@ -67,6 +67,22 @@
   h1{font-size:30px}
   .brief{margin:14px 0 20px; gap:16px}
 }
+.lobby-note{max-width:64ch; margin:10px 0 0; font-size:15px; color:var(--faint)}
+.case.locked{cursor:default}
+.case.locked .pic{filter:grayscale(1) brightness(.8)}
+.case.locked h2,.case.locked p{opacity:.7}
+#lobby .sec-head{margin-top:34px}
+.case .lock{background:rgba(20,18,14,.38);position:absolute; left:0; right:0; top:0; aspect-ratio:3/2; display:grid; place-items:center; text-align:center; padding:0 16px; font-family:var(--display); font-size:20px; color:#fff; text-shadow:0 1px 6px rgba(0,0,0,.9)}
+.case .pic.ph{display:grid; place-items:center; background:#3b3a36; color:#e9e2d0; font-family:var(--display); font-size:18px}
+.evbox{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin-top:16px}
+@media (max-width:700px){.evbox{grid-template-columns:1fr}}
+.ev{border:1px dashed var(--rule); border-radius:3px; padding:14px 16px; background:var(--paper); min-height:92px; min-width:0}
+.ev.got{border:1px solid var(--seal); background:var(--sheet)}
+.ev .no{font-family:var(--display); color:var(--faint); font-size:14px}
+.ev b{display:block; font-family:var(--display); font-size:19px; margin:2px 0 4px; color:var(--seal); font-weight:400}
+.ev p{margin:0; font-size:14px; color:var(--faint)}
+.ev:not(.got) b{color:var(--faint)}
+.gotev{border:2px solid var(--seal); padding:10px 14px; border-radius:3px; color:var(--seal); margin:16px 0}
 .portrait-ph{aspect-ratio:1; border:1px dashed var(--rule); border-radius:3px; display:grid; place-items:center; font-family:var(--display); font-size:44px; color:var(--faint); background:var(--paper)}
 </style>
 
@@ -79,8 +95,12 @@
         <h1>조선 탐정 사무소</h1>
       </div>
     </div>
-    <p class="lead-intro">맡을 사건을 고르세요. 사건마다 수사 기록은 따로 남고, 언제든 이어서 할 수 있어요.</p>
+    <p class="lead-intro">3년 전, 포도청 종사관이던 나는 한 사건을 쫓다가 윗선의 손에 수사를 빼앗기고 관복을 벗었다. 지금은 북촌 골목 끝에서 간판도 없이 남의 사정을 캐며 산다. 이 수사 장부에는 그 뒤로 맡은 사건들이 적혀 있다.</p>
+    <p class="lobby-note">앞 사건을 풀어야 다음 사건이 열려요. 사건마다 수사 기록은 따로 남고, 언제든 이어서 할 수 있어요.</p>
+    <div class="sec-head"><h2>수사 장부</h2><small>봄부터 겨울까지</small></div>
     <div class="cases" id="cases"></div>
+    <div class="sec-head"><h2>증거함</h2><small>사건을 풀 때마다 하나씩 남는다</small></div>
+    <div class="evbox" id="evbox"></div>
   </section>
 
   <!-- 사건 화면 -->
@@ -215,7 +235,7 @@
     i_book:'<rect class="p" x="10" y="8" width="26" height="34" rx="1"/><path d="M14 8 V42"/><path class="g" d="M10 14 H14 M10 22 H14 M10 30 H14"/>'
   });
   ICON.i_gourd2=ICON.i_gourd; ICON.i_bowl2=ICON.i_bowl; ICON.i_yunshoes=ICON.i_shoes;
-  const tm = s => String(s).replace(/술시/g,'술시(저녁 7~9시)').replace(/해시/g,'해시(밤 9~11시)');
+  const tm = s => String(s).replace(/술시/g,'술시(저녁 7~9시)').replace(/해시/g,'해시(밤 9~11시)').replace(/자시/g,'자시(밤 11시~새벽 1시)');
   const icon = id => '<svg class="ic" viewBox="0 0 48 48" aria-hidden="true">'+(ICON[id]||'')+'</svg>';
 
   // ================= 1편: 사라진 봉황 옥비녀 =================
@@ -224,11 +244,18 @@
   const JAR = {flag:'jarhint', give:'t_dolsoe2', hint:'뒷마당 장독대를 다시 살펴볼 만하다.',
     say:'"굽 있는 신 자국이라굽쇼? 저희 하인들은 다 짚신입니다요. ...아, 그러고 보니 오늘 새벽 장 뜨러 갔더니 큰 된장독 뚜껑이 비뚤게 덮여 있었습죠. 진흙 손자국 같은 게 묻어 있어서 이상하다 했는데, 바빠서 그냥 바로 덮어 놨습니다요."'};
   for(const p of PEOPLE) for(const k in p.show) if(p.show[k]==='JAR') p.show[k]=JAR;
+  // 세계관: 종로 전당포는 흑묵당, 주인은 마 노인
+  const HM = s => typeof s==='string' ? s.replace(/종로 전당포(?! 흑묵당)/g,'종로 전당포 흑묵당') : s;
+  E.i_debt.text='종로 전당포 흑묵당이 김 서생에게 보낸 독촉장. 끝에 붉은 매듭 모양 인장이 찍혀 있다. "오늘 해 지기 전까지 갚지 않으면 관아에 고하겠음."';
+  E.t_pawn.text='종로 전당포 흑묵당은 출처를 묻지 않고 물건을 받아 주는 곳으로 소문났다. 주인은 마 노인이라는 늙은이다.';
+  for(const p of PLACES) for(const sp of p.spots){ sp.text=HM(sp.text).replace('빚 독촉장이다.','빚 독촉장이다. 끝에 붉은 매듭 모양 인장이 찍혀 있다.'); if(sp.after) sp.after.text=HM(sp.after.text); }
+  for(const p of PEOPLE){ p.line=HM(p.line); for(const k in p.show){ const v=p.show[k]; if(typeof v==='string') p.show[k]=HM(v); else if(v && v.say) v.say=HM(v.say); } }
+  if(PEOPLE.find(p=>p.id==='park') && PEOPLE.find(p=>p.id==='park').show.i_debt && PEOPLE.find(p=>p.id==='park').show.i_debt.say) PEOPLE.find(p=>p.id==='park').show.i_debt.say=PEOPLE.find(p=>p.id==='park').show.i_debt.say.replace('딱이지."','딱이지. 주인 마 노인은 웃는 얼굴로 사람 목을 죈다오."');
   return {
-    id:'c1', no:'첫 번째 사건', title:'사라진 봉황 옥비녀', thumb:'anbang', key:'jd-case1-v2',
+    id:'c1', no:'첫 번째 사건', season:'봄', accuseHead:'참판 어른 앞에서', title:'사라진 봉황 옥비녀', thumb:'anbang', key:'jd-case1-v2',
     blurb:'참판 댁 마님의 생신 비녀가 자개함에서 사라졌다. 방을 뒤져 범인을 밝히고 비녀까지 되찾아라.',
     story:[
-      '한양 북촌 골목 끝, 간판도 없이 문을 연 조선 탐정 사무소. 오늘 아침 윤 참판 댁 청지기가 헐레벌떡 찾아왔습니다.',
+      '봄. 포도청을 떠난 지 3년, 한양 북촌 골목 끝에 간판도 없이 문을 연 조선 탐정 사무소. 오늘 아침 윤 참판 댁 청지기가 헐레벌떡 찾아왔습니다.',
       '내일은 마님의 쉰 번째 생신입니다. 잔치 날 꽂으려고 아껴 둔 봉황 옥비녀가 어젯밤 안방 자개함에서 감쪽같이 사라졌습니다. 참판 어른은 소문이 나기 전에 조용히 범인을 밝히고, 비녀까지 되찾아 달라고 하십니다.',
       '어젯밤 집 안팎을 오간 사람은 넷입니다. 사랑채에 묵는 먼 친척 김 서생, 머슴 돌쇠, 자개함 열쇠를 맡은 침모 끝순, 낮에 다녀간 방물장수 박씨. 박씨는 오늘 아침 외상값을 받으러 다시 와 있습니다. 대문은 해시 초에 잠겼고, 그 시각 마님은 대청에서 잔치 준비를 하느라 안방을 비웠습니다.'
     ],
@@ -246,7 +273,7 @@
       const r={who:q.q1==='kim', how:q.q2==='d_pry', where:['d_wax','d_shoe'].includes(q.q3), lie:q.q4==='d_lie', why:q.q5==='d_motive', pin:q.q6==='i_jade', paper:S.deds.includes('d_paper')};
       const core=[r.how,r.where,r.lie,r.why].filter(Boolean).length;
       let v;
-      if(!r.who) v={title:'오판', seal:'誤<br>判', lead:'엉뚱한 사람이 포도청에 끌려갔습니다. 그날 밤, 김 서생은 장독에서 비녀를 꺼내 종로 전당포로 사라졌습니다.'};
+      if(!r.who) v={title:'오판', seal:'誤<br>判', lead:'엉뚱한 사람이 포도청에 끌려갔습니다. 그날 밤, 김 서생은 장독에서 비녀를 꺼내 종로 흑묵당으로 사라졌습니다.'};
       else if(core===4 && r.pin && r.paper) v={title:'명탐정', seal:'名<br>探', lead:'김 서생은 비녀를 싼 종이와 찢긴 서책을 나란히 놓자 무릎을 꿇었습니다. 비녀는 마님 머리로 돌아갔고, 잔치는 예정대로 열립니다.'};
       else if(core>=3 && r.pin) v={title:'해결', seal:'解<br>決', lead:'비녀를 되찾았고 김 서생도 결국 자백했습니다. 다만 몇 가지 근거가 빈약해 참판 어른이 고개를 갸웃하십니다.'};
       else v={title:'반쯤 맞힘', seal:'未<br>結', lead:'범인은 맞혔지만 근거가 모자라 김 서생이 끝까지 버팁니다. '+(r.pin?'비녀를 찾은 것이 그나마 다행입니다.':'비녀의 행방도 묘연합니다.')};
@@ -254,17 +281,27 @@
       return v;
     },
     truth:[
-      '김 서생은 과거 공부를 핑계로 참판 댁에 얹혀살며 종로 전당포에 빚을 졌습니다. 갚을 날은 오늘이었지요. 어제 낮, 박씨가 마님께 비녀가 쌀 서른 섬 값이라고 하는 말을 옆에서 들었습니다.',
+      '김 서생은 과거 공부를 핑계로 참판 댁에 얹혀살며 종로 전당포 흑묵당에 빚을 졌습니다. 갚을 날은 오늘이었지요. 어제 낮, 박씨가 마님께 비녀가 쌀 서른 섬 값이라고 하는 말을 옆에서 들었습니다.',
       '해시, 대문이 잠기고 마님이 대청으로 가자 김 서생은 밀초를 들고 가죽신을 신은 채 사랑채 담을 넘었습니다. 기와가 깨지는 소리를 돌쇠가 들었지만 고양이인 줄 알았지요. 열쇠가 없으니 은장도로 자개함 경첩 못을 비틀어 뽑았고, 그때 칼끝이 휘었습니다. 문지방 앞에는 밀초 촛농이 떨어졌습니다.',
       '돌아오는 길, 도끼 소리가 담 쪽으로 다가오자 겁이 난 김 서생은 서책 맨 뒷장을 찢어 비녀를 싸고 된장독에 숨겼습니다. 오늘 밤 꺼내 전당포에 맡길 셈이었지요. 술에 취해 잤다는 말은 처음부터 거짓이었습니다.',
       '끝순의 가락지와 대문간의 유리 비녀는 사건과 관계없는 일이었습니다.'
-    ]
+    ],
+    epilogue:[
+      '포도청으로 넘겨지기 전, 김 서생이 한마디를 남겼습니다. "비녀 얘기를 처음 꺼낸 건 전당포 영감이었소. 참판 댁에 쌀 서른 섬짜리 비녀가 있다더라고. 가져오면 빚을 다 없애 주겠다 했소."',
+      '방물장수 박씨가 혀를 찼습니다. "흑묵당 마 노인 말씀이지요? 종로 바닥에서 그 늙은이한테 빚 안 진 사람 찾기가 더 어렵습지요. 돈 묶는 끈마다 붉은 매듭을 짓는 게 그 집 표시랍니다. 쇤네도 귀를 열어 두겠습니다요."',
+      '나는 독촉장을 다시 펼쳤습니다. 끝에 찍힌 붉은 매듭 인장이 어쩐지 낯익었습니다. 3년 전 내 수사가 덮이던 날 본 문서에도 같은 매듭이 있었던 것 같았습니다.'
+    ],
+    evidence:{name:'붉은 매듭 인장 독촉장', text:'김 서생이 받은 흑묵당의 빚 독촉장. 끝에 붉은 매듭 모양 인장이 찍혀 있다.'}
   };
   })();
 
 /*CASE2*/
+  CASE2.accuseHead='한 종사관 앞에서';
+/*CASE3*/
+  CASE3.accuseHead='강 훈장과 한 종사관 앞에서';
 
-  const CASES = [CASE1, CASE2];
+  const CASES = [CASE1, CASE2, CASE3];
+  const NEXT = {id:'c4', no:'네 번째 사건', season:'겨울', title:'흑묵당의 장부', blurb:'첫눈 내린 밤, 붉은 매듭 노리개를 찬 노인이 사무소 문을 두드린다. "내 장부를 찾아 주시오."'};
 
   // ---------- 공통 상태 ----------
   const $ = id => document.getElementById(id);
@@ -272,6 +309,11 @@
   const readState = c => { let s=blank(); try{ const d=JSON.parse(localStorage.getItem(c.key)); if(d && Array.isArray(d.have)) s=Object.assign(blank(), d); }catch(e){} return s; };
   let C=null, E={}, DEDS={}, PLACES=[], PEOPLE=[], PAIR={}, S=blank();
   let sel=[], lookId=null;
+  const SOLVED='jd-solved';
+  const readSolved = ()=>{ try{ const a=JSON.parse(localStorage.getItem(SOLVED)); return Array.isArray(a)?a:[]; }catch(e){ return []; } };
+  const isSolved = c => { if(readSolved().includes(c.id)) return true; const st=readState(c); return !!st.done && c.judge(st).title!=='오판'; };
+  const markSolved = c => { const a=readSolved(); if(!a.includes(c.id)){ a.push(c.id); try{ localStorage.setItem(SOLVED, JSON.stringify(a)); }catch(e){} } };
+  const isOpen = i => { if(i===0) return true; const st=readState(CASES[i]); return isSolved(CASES[i-1]) || st.visited.length>0 || st.talked.length>0; };
   const save = ()=>{ if(!C) return; try{ localStorage.setItem(C.key, JSON.stringify(S)); }catch(e){} };
   const img = k => (window.IMG && IMG[C.id] && IMG[C.id][k]) || null;
   const isClue = s => !!(s.give && s.give.length) || (s.take||[]).some(i=>!E[i].junk);
@@ -287,15 +329,25 @@
   // ---------- 사건 목록 ----------
   function renderLobby(){
     $('cases').innerHTML='';
-    for(const c of CASES){
-      const st=readState(c), im=(window.IMG&&IMG[c.id]&&IMG[c.id][c.thumb])||null;
-      const b=document.createElement('button'); b.className='case'; b.type='button'; b.id='case-'+c.id;
-      const stamp = st.done ? '<span class="stamp">해결함</span>' : (st.visited.length||st.talked.length ? '<span class="stamp going">수사 중</span>' : '');
+    CASES.forEach((c,i)=>{
+      const st=readState(c), im=(window.IMG&&IMG[c.id]&&IMG[c.id][c.thumb])||null, open=isOpen(i), solved=isSolved(c);
+      const b=document.createElement('button'); b.className='case'+(open?'':' locked'); b.type='button'; b.id='case-'+c.id;
+      const stamp = !open ? '' : solved ? '<span class="stamp">해결함</span>' : (st.done ? '<span class="stamp going">다시 수사</span>' : (st.visited.length||st.talked.length ? '<span class="stamp going">수사 중</span>' : ''));
       b.innerHTML=(im?'<div class="pic" style="background-image:url('+im+')"></div>':'<div class="pic ph">그림 준비 중</div>')+stamp
-        +'<div class="body"><div class="no">'+c.no+'</div><h2>'+c.title+'</h2><p>'+c.blurb+'</p></div>';
-      b.addEventListener('click',()=>openCase(c));
+        +(open?'':'<span class="lock">잠김<br>앞 사건을 풀면 열립니다</span>')
+        +'<div class="body"><div class="no">'+c.season+' · '+c.no+'</div><h2>'+c.title+'</h2><p>'+c.blurb+'</p></div>';
+      if(!open) b.setAttribute('aria-disabled','true');
+      b.addEventListener('click',()=>{ if(open) openCase(c); else toast('아직 열리지 않은 사건','앞 사건 「'+CASES[i-1].title+'」부터 풀어야 합니다.', true); });
       $('cases').appendChild(b);
-    }
+    });
+    const last=CASES[CASES.length-1], ready=isSolved(last);
+    const n=document.createElement('button'); n.className='case locked'; n.type='button'; n.id='case-'+NEXT.id; n.setAttribute('aria-disabled','true');
+    n.innerHTML='<div class="pic ph"></div><span class="lock">'+(ready?'준비 중<br>곧 이어집니다':'잠김<br>앞 사건을 풀면 열립니다')+'</span>'
+      +'<div class="body"><div class="no">'+NEXT.season+' · '+NEXT.no+'</div><h2>'+NEXT.title+'</h2><p>'+(ready?NEXT.blurb:'아직 장부에 적히지 않은 사건.')+'</p></div>';
+    n.addEventListener('click',()=>toast(ready?'준비 중':'아직 열리지 않은 사건', ready?'네 번째 사건은 지금 만들고 있어요.':'앞 사건 「'+last.title+'」부터 풀어야 합니다.', true));
+    $('cases').appendChild(n);
+    $('evbox').innerHTML=CASES.map(c=>{ const got=isSolved(c);
+      return '<div class="ev'+(got?' got':'')+'" id="ev-'+c.id+'"><div class="no">'+c.season+' · '+c.title+'</div>'+(got?'<b>'+c.evidence.name+'</b><p>'+c.evidence.text+'</p>':'<b>비어 있음</b><p>이 사건을 풀면 채워집니다.</p>')+'</div>'; }).join('');
   }
   function openCase(c){
     C=c; E=c.E; DEDS=c.DEDS; PLACES=c.PLACES; PEOPLE=c.PEOPLE;
@@ -307,7 +359,7 @@
     try{ localStorage.setItem('jd-last', c.id); }catch(e){}
     $('caseNo').textContent='조선 탐정 사무소 · '+c.no; $('caseTitle').textContent=c.title;
     $('story').innerHTML=c.story.map(p=>'<p>'+tm(p)+'</p>').join('');
-    $('accuseHead').textContent=c.id==='c1'?'참판 어른 앞에서':'포도청 종사관 앞에서';
+    $('accuseHead').textContent=c.accuseHead||'지목';
     $('accuse').hidden=true;
     $('lobby').hidden=true; $('game').hidden=false;
     renderAll(); scrollTo({top:0});
@@ -519,19 +571,25 @@
   function renderVerdict(){
     const v=$('verdict');
     if(!S.done){ v.hidden=true; return; }
-    const j=C.judge(S);
+    const j=C.judge(S), ok=j.title!=='오판', nx=CASES[CASES.indexOf(C)+1];
+    if(ok) markSolved(C);
     const li=(ok,t)=>'<li class="'+(ok?'o':'x')+'">'+(ok?'○':'×')+' '+t+'</li>';
     v.innerHTML='<div class="seal" aria-hidden="true">'+j.seal+'</div><div class="head"><h2>'+j.title+'</h2><p>'+j.lead+'</p></div>'
       +'<ul class="score">'+j.rows.map(r=>li(r[0],r[1])).join('')+'<li>세운 추리 '+S.deds.length+'개</li></ul>'
       +'<h2 style="font-size:22px">사건의 전말</h2>'+C.truth.map(p=>'<p>'+tm(p)+'</p>').join('')
-      +'<div class="row"><button class="btn primary" id="restartBtn">처음부터 다시</button><button class="btn" id="toLobby">사건 목록으로</button></div>';
+      +(ok ? '<h2 style="font-size:22px">그 뒤의 일</h2>'+(C.epilogue||[]).map(p=>'<p>'+tm(p)+'</p>').join('')
+             +(C.evidence?'<p class="gotev">증거함에 넣었다 · <b>'+C.evidence.name+'</b></p>':'')
+           : '<p class="gotev">범인을 잘못 짚었습니다. 이 사건을 풀어야 다음 사건이 열립니다.</p>')
+      +'<div class="row">'+(ok && nx ? '<button class="btn primary" id="nextBtn">다음 사건: '+nx.title+'</button>' : '')
+      +'<button class="btn'+(ok&&nx?'':' primary')+'" id="restartBtn">처음부터 다시</button><button class="btn" id="toLobby">사건 목록으로</button></div>';
     v.hidden=false;
+    if($('nextBtn')) $('nextBtn').addEventListener('click',()=>{ $('toast').hidden=true; openCase(nx); });
     $('restartBtn').addEventListener('click',()=>{ S=blank(); sel=[]; lookId=null; save(); $('accuse').hidden=true; renderAll(); scrollTo({top:0,behavior:'smooth'}); });
     $('toLobby').addEventListener('click',()=>$('lobbyBtn').click());
   }
   $('accuseBtn').addEventListener('click',()=>{ $('accuse').hidden=false; renderAccuse(); $('accuse').scrollIntoView({behavior:'smooth'}); });
   $('backBtn').addEventListener('click',()=>{ $('accuse').hidden=true; scrollTo({top:0,behavior:'smooth'}); });
-  $('submitBtn').addEventListener('click',()=>{ S.done=true; save(); $('accuse').hidden=true; renderAll(); $('verdict').scrollIntoView({behavior:'smooth'}); });
+  $('submitBtn').addEventListener('click',()=>{ S.done=true; save(); if(C.judge(S).title!=='오판') markSolved(C); $('accuse').hidden=true; renderAll(); $('verdict').scrollIntoView({behavior:'smooth'}); });
 
   try{ if(innerWidth<700) $('rulesBox').open=false; }catch(e){}
   renderLobby();
